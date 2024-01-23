@@ -56,6 +56,12 @@ const { data, pending, error, refresh } = await useAsyncData(
   () => $fetch(`${apiBaseUrl}/discussions/${discussionId}`)
 );
 
+console.log(data.value);
+
+if (error.value) {
+  console.error(error.value)
+}
+
 const ownerProfile = computed(() => data.value.users.find(
   (user) => user.id === data.value.discussion.ownerId
 ) || null);

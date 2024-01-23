@@ -57,7 +57,9 @@ const { data, pending, error, refresh } = await useAsyncData(
   () => $fetch(`${apiBaseUrl}/discussions`)
 );
 
-if (error) {
-  console.error(error)
+console.log(data.value);
+
+if (error.value) {
+  console.error(error.value)
 }
 </script>
