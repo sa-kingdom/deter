@@ -24,8 +24,10 @@
           </div>
         </div>
       </div>
-      <div class="column is-9-wide">
+      <div class="column is-9-wide" v-if="!pending">
         <index-discussion-item v-for="(j, i) in data.discussions" :key="i" v-bind="j" :users="data.users" />
+      </div>
+      <div class="column is-9-wide" v-else>
       </div>
       <div class="column is-4-wide">
         <div style="position: sticky; top: 1rem">
@@ -54,4 +56,8 @@ const { data, pending, error, refresh } = await useAsyncData(
   'discussions',
   () => $fetch(`${apiBaseUrl}/discussions`)
 );
+
+if (error) {
+  console.error(error)
+}
 </script>
