@@ -3,29 +3,26 @@
     <div class="ts-grid is-relaxed">
       <div class="column is-3-wide">
         <div style="position: sticky; top: 1rem">
+          <div class="ts-menu is-start-icon is-separated">
+            <a href="/" class="ts-button">
+              <span class="ts-icon is-less-than-icon"></span> 返回首頁
+            </a>
+          </div>
+          <div class="ts-divider is-section"></div>
+          <div class="ts-wrap is-middle-aligned">
+            <div class="ts-text is-heavy">{{ data.discussion.name }}</div>
+          </div>
           <div class="ts-divider is-section"></div>
           <div class="ts-wrap is-middle-aligned">
             <div class="ts-avatar is-circular">
-              <img src="https://v4.tocas-ui.com/zh-tw/assets/images/user.png" />
+              <img :src="`https://cdn.discordapp.com/avatars/${ownerProfile?.id}/${ownerProfile?.avatarHash}`" />
             </div>
-            <div class="ts-text is-heavy">你好！我們的朋友！</div>
-          </div>
-          <div class="ts-divider is-section"></div>
-          <p>
-            在名為 Discord 的高速公路風馳電掣的論壇系統 ⚔️
-          </p>
-          <div class="ts-menu is-start-icon is-separated">
-            <div class="ts-divider"></div>
-            <a href="#!" class="item"> <span class="ts-icon is-comments-icon"></span> 八卦 </a>
-            <a href="#!" class="item"> <span class="ts-icon is-box-icon"></span> 廢文 </a>
-            <a href="#!" class="item"> <span class="ts-icon is-store-icon"></span> 市集</a>
-            <a href="#!" class="item"> <span class="ts-icon is-flag-icon"></span> 站方 </a>
-            <a href="#!" class="item"> <span class="ts-icon is-star-icon"></span> 精華 </a>
+            <div class="ts-text">{{ ownerProfile.displayName }}</div>
           </div>
         </div>
       </div>
       <div class="column is-9-wide">
-        <index-discussion-item v-for="(j, i) in data.discussions" :key="i" v-bind="j" :users="data.users" />
+        <discussion-post v-for="(j, i) in data.posts" :key="i" v-bind="j" :users="data.users" />
       </div>
       <div class="column is-4-wide">
         <div style="position: sticky; top: 1rem">
@@ -46,12 +43,18 @@
 </template>
 
 <script setup>
-import IndexDiscussionItem from "../components/IndexDiscussionItem.vue";
+import discussionPost from "../../components/DiscussionPost.vue";
 
 const {apiBaseUrl} = useRuntimeConfig();
+const route = useRoute();
 
+const { discussionId } = route.params;
 const { data, pending, error, refresh } = await useAsyncData(
-  'duscussions',
-  () => $fetch(`${apiBaseUrl}/discussions`)
+  'discussion-data',
+  () => $fetch(`${apiBaseUrl}/discussions/${discussionId}`)
 );
+
+const ownerProfile = computed(() => data.value.users.find(
+  (user) => user.id === data.value.discussion.ownerId
+) || null);
 </script>

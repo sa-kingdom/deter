@@ -7,7 +7,7 @@ export default defineNuxtConfig({
       meta: [
         {
           name: 'description',
-          content: '在名為 Discord 的高速公路風馳電掣的論壇系統！ 在 Discord 建立公開論壇？騙人的吧...'
+          content: '在名為 Discord 的高速公路風馳電掣的論壇系統！在 Discord 建立公開論壇？騙人的吧...'
         }
       ],
       link: [
@@ -19,5 +19,8 @@ export default defineNuxtConfig({
       ]
     },
   },
-  devtools: { enabled: true }
+  devtools: { enabled: true },
+  runtimeConfig: {
+    apiBaseUrl: 'http://localhost:3000',
+  }
 })
