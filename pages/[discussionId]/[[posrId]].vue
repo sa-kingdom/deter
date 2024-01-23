@@ -1,7 +1,7 @@
 <template>
   <div class="ts-container has-vertically-spaced-large">
     <div class="ts-grid is-relaxed">
-      <div class="column is-3-wide">
+      <div class="column is-3-wide mobile:ts-app-drawer">
         <div style="position: sticky; top: 1rem">
           <div class="ts-menu is-start-icon is-separated">
             <a href="/" class="ts-button">
@@ -21,12 +21,12 @@
           </div>
         </div>
       </div>
-      <div class="column is-9-wide" v-if="!pending">
+      <div class="column is-9-wide mobile:is-16-wide" v-if="!pending">
         <discussion-post v-for="(j, i) in data.posts" :key="i" v-bind="j" :users="data.users" />
       </div>
-      <div class="column is-9-wide" v-else>
+      <div class="column is-9-wide mobile:is-16-wide" v-else>
       </div>
-      <div class="column is-4-wide">
+      <div class="column is-4-wide mobile:ts-app-drawer">
         <div style="position: sticky; top: 1rem">
           <div class="ts-menu is-start-icon is-separated">
             <div class="ts-divider is-section"></div>
