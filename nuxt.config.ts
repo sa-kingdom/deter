@@ -19,6 +19,13 @@ export default defineNuxtConfig({
       ]
     },
   },
+  modules: ['dayjs-nuxt'],
+  dayjs: {
+    locales: ['zh-tw'],
+    plugins: ['relativeTime', 'utc', 'timezone'],
+    defaultLocale: 'en',
+    defaultTimezone: 'America/New_York',
+  },
   devtools: { enabled: true },
   runtimeConfig: {
     apiBaseUrl: 'http://localhost:3000',

@@ -25,7 +25,7 @@
         </div>
       </div>
       <div class="column is-9-wide mobile:is-16-wide">
-        <index-discussion-item v-for="(j, i) in data.discussions" :key="i" v-bind="j" :users="data.users" />
+        <index-discussion-item v-for="(j, i) in data" :key="i" v-bind="j" />
       </div>
       <div class="column is-4-wide mobile:ts-app-drawer">
         <div style="position: sticky; top: 1rem">
@@ -57,7 +57,7 @@ const { data, pending, error, refresh } = await useAsyncData(
   () => $fetch(`${apiBaseUrl}/discussions`)
 );
 
-console.log(data.value);
+console.log(data.value)
 
 if (error.value) {
   console.error(error.value)

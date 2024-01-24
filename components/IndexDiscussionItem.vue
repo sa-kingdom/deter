@@ -10,7 +10,9 @@
         <div style="line-height: 1.5">
           <div class="ts-text is-heavy">{{ props.name }}</div>
           <div class="ts-meta is-small is-secondary">
-            <div class="item">{{ props.createdAt }}｜{{ ownerProfile.displayName }}</div>
+            <div class="item" :title="props.createdAt">
+              {{ $dayjs(props.createdAt).fromNow() }} | {{ props.user.displayName }}
+            </div>
           </div>
         </div>
       </div>
@@ -30,8 +32,12 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  "ownerId": {
+  "userId": {
     type: String,
+    required: true,
+  },
+  "user": {
+    type: Object,
     required: true,
   },
   "lastMessageId": {
@@ -54,18 +60,10 @@ const props = defineProps({
     type: String,
     required: true,
   },
-  "users": {
-    type: Array,
-    required: true,
-  },
 });
 
-const ownerProfile = computed(() => props.users.find(
-  (user) => user.id === props.ownerId
-));
-
 const ownerProfileAvatar = computed(() => {
-    const { id, avatarHash } = ownerProfile.value;
+    const { id, avatarHash } = props.user;
     if (!avatarHash) {
         return DragonLightIcon;
     }

@@ -10,14 +10,19 @@
           </div>
           <div class="ts-divider is-section"></div>
           <div class="ts-wrap is-middle-aligned">
-            <div class="ts-text is-heavy">{{ data.discussion.name }}</div>
+            <div class="ts-text is-heavy">{{ data.name }}</div>
           </div>
           <div class="ts-divider is-section"></div>
           <div class="ts-wrap is-middle-aligned">
             <div class="ts-avatar is-circular">
               <img :src="ownerProfileAvatar" />
             </div>
-            <div class="ts-text">{{ ownerProfile.displayName }}</div>
+            <div class="column">
+              <div class="ts-text">{{ data.user.displayName }}</div>
+              <div class="ts-text is-small" :title="data.createdAt">
+                {{ $dayjs(data.createdAt).fromNow() }}
+              </div>
+            </div>
           </div>
         </div>
       </div>
@@ -49,7 +54,7 @@ import DragonLightIcon from "../assets/DragonLightIcon.png"
 
 import discussionPost from "../../components/DiscussionPost.vue";
 
-const {apiBaseUrl} = useRuntimeConfig();
+const { apiBaseUrl } = useRuntimeConfig();
 const route = useRoute();
 
 const { discussionId } = route.params;
@@ -58,21 +63,15 @@ const { data, pending, error, refresh } = await useAsyncData(
   () => $fetch(`${apiBaseUrl}/discussions/${discussionId}`)
 );
 
-console.log(data.value);
-
 if (error.value) {
   console.error(error.value)
 }
 
-const ownerProfile = computed(() => data.value.users.find(
-  (user) => user.id === data.value.discussion.ownerId
-) || null);
-
 const ownerProfileAvatar = computed(() => {
-    const { id, avatarHash } = ownerProfile.value;
-    if (!avatarHash) {
-        return DragonLightIcon;
-    }
-    return `https://cdn.discordapp.com/avatars/${id}/${avatarHash}`
+  const { id, avatarHash } = data.value.user;
+  if (!avatarHash) {
+    return DragonLightIcon;
+  }
+  return `https://cdn.discordapp.com/avatars/${id}/${avatarHash}`
 });
 </script>
