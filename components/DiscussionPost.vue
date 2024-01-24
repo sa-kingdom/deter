@@ -18,6 +18,9 @@
                             <span class="text plain" v-if="j.type === 'text'">
                                 {{ j.content }}
                             </span>
+                            <span class="text twemoji" v-if="j.type === 'twemoji'">
+                                {{ j.name }}
+                            </span>
                             <span class="text emoji" v-if="j.type === 'emoji'">
                                 <img class="ts-icon" :src="`https://cdn.discordapp.com/emojis/${j.id}`" />
                             </span>
