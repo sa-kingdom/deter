@@ -45,6 +45,8 @@
 </template>
 
 <script setup>
+import UserIcon from "../assets/UserIcon.png"
+
 import discussionPost from "../../components/DiscussionPost.vue";
 
 const {apiBaseUrl} = useRuntimeConfig();
@@ -65,4 +67,12 @@ if (error.value) {
 const ownerProfile = computed(() => data.value.users.find(
   (user) => user.id === data.value.discussion.ownerId
 ) || null);
+
+const ownerProfileAvatar = computed(() => {
+    const { id, avatarHash } = ownerProfile.value;
+    if (!avatarHash) {
+        return UserIcon;
+    }
+    return `https://cdn.discordapp.com/avatars/${id}/${avatarHash}`
+});
 </script>

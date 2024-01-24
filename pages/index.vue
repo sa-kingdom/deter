@@ -6,7 +6,7 @@
           <div class="ts-divider is-section"></div>
           <div class="ts-wrap is-middle-aligned">
             <div class="ts-avatar is-circular">
-              <img src="https://v4.tocas-ui.com/zh-tw/assets/images/user.png" />
+              <img :src="UserIcon" />
             </div>
             <div class="ts-text is-heavy">你好！我們的朋友！</div>
           </div>
@@ -46,6 +46,8 @@
 </template>
 
 <script setup>
+import UserIcon from "../assets/UserIcon.png"
+
 import IndexDiscussionItem from "../components/IndexDiscussionItem.vue";
 
 const {apiBaseUrl} = useRuntimeConfig();

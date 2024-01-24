@@ -3,7 +3,7 @@
     <div class="ts-grid">
       <div class="column">
         <div class="ts-avatar is-large is-circular">
-          <img :src="`https://cdn.discordapp.com/avatars/${ownerProfile.id}/${ownerProfile.avatarHash}`" />
+          <img :src="ownerProfileAvatar" />
         </div>
       </div>
       <div class="column is-fluid">
@@ -19,6 +19,8 @@
 </template>
 
 <script setup>
+import UserIcon from "../assets/UserIcon.png"
+
 const props = defineProps({
   "id": {
     type: String,
@@ -61,4 +63,12 @@ const props = defineProps({
 const ownerProfile = computed(() => props.users.find(
   (user) => user.id === props.ownerId
 ));
+
+const ownerProfileAvatar = computed(() => {
+    const { id, avatarHash } = ownerProfile.value;
+    if (!avatarHash) {
+        return UserIcon;
+    }
+    return `https://cdn.discordapp.com/avatars/${id}/${avatarHash}`
+});
 </script>
