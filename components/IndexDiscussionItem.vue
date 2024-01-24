@@ -19,7 +19,7 @@
 </template>
 
 <script setup>
-import UserIcon from "../assets/UserIcon.png"
+import DragonLightIcon from "../assets/DragonLightIcon.png"
 
 const props = defineProps({
   "id": {
@@ -67,7 +67,7 @@ const ownerProfile = computed(() => props.users.find(
 const ownerProfileAvatar = computed(() => {
     const { id, avatarHash } = ownerProfile.value;
     if (!avatarHash) {
-        return UserIcon;
+        return DragonLightIcon;
     }
     return `https://cdn.discordapp.com/avatars/${id}/${avatarHash}`
 });

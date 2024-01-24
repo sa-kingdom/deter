@@ -15,7 +15,7 @@
           <div class="ts-divider is-section"></div>
           <div class="ts-wrap is-middle-aligned">
             <div class="ts-avatar is-circular">
-              <img :src="`https://cdn.discordapp.com/avatars/${ownerProfile?.id}/${ownerProfile?.avatarHash}`" />
+              <img :src="ownerProfileAvatar" />
             </div>
             <div class="ts-text">{{ ownerProfile.displayName }}</div>
           </div>
@@ -45,7 +45,7 @@
 </template>
 
 <script setup>
-import UserIcon from "../assets/UserIcon.png"
+import DragonLightIcon from "../assets/DragonLightIcon.png"
 
 import discussionPost from "../../components/DiscussionPost.vue";
 
@@ -71,7 +71,7 @@ const ownerProfile = computed(() => data.value.users.find(
 const ownerProfileAvatar = computed(() => {
     const { id, avatarHash } = ownerProfile.value;
     if (!avatarHash) {
-        return UserIcon;
+        return DragonLightIcon;
     }
     return `https://cdn.discordapp.com/avatars/${id}/${avatarHash}`
 });
