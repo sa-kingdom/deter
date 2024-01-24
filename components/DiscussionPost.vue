@@ -1,62 +1,24 @@
 <template>
     <div class="ts-segment has-top-spaced">
         <div class="ts-grid">
-            <div class="column">
-                <div class="ts-avatar is-large is-circular">
-                    <img :src="authorProfileAvatar" />
+            <discussion-post-box :id="props.id" :createdAt="props.createdAt" :userId="props.userId"
+                :displayName="props.user.displayName" :avatarHash="props.user.avatarHash">
+                <div class="content has-vertically-spaced-small" v-if="props.content.length">
+                    <discussion-post-box-content :id="props.id" :content="props.content" />
                 </div>
-            </div>
-            <div class="column is-fluid">
-                <div style="line-height: 1.5">
-                    <div class="ts-meta is-small is-secondary">
-                        <div class="item" :title="props.createdAt">
-                            {{ props.user.displayName }} | {{ $dayjs(props.createdAt).fromNow() }}
-                        </div>
-                    </div>
-                    <div class="content has-vertically-spaced-small" v-if="props.content.length">
-                        <span v-for="(j, i) in props.content" :key="i">
-                            <span class="text plain" v-if="j.type === 'text'">
-                                {{ j.content }}
-                            </span>
-                            <span class="text twemoji" v-if="j.type === 'twemoji'">
-                                {{ j.name }}
-                            </span>
-                            <span class="text emoji" v-if="j.type === 'emoji'">
-                                <img class="ts-icon" :src="`https://cdn.discordapp.com/emojis/${j.id}`" />
-                            </span>
-                            <span class="text url" v-if="j.type === 'url'">
-                                <span class="ts-image is-rounded is-bordered"
-                                    v-if="j.target.startsWith('https://media.discordapp.net/attachments/')">
-                                    <img :src="j.target" />
-                                </span>
-                                <span v-else>
-                                    <a :href="j.target">
-                                        {{ j.target }}
-                                    </a>
-                                </span>
-                            </span>
-                        </span>
-                    </div>
-                    <div class="content has-vertically-spaced-small" v-if="props.media.length">
-                        <div v-for="(j, i) in props.media" :key="i">
-                            <div class="media image ts-image is-rounded is-bordered" v-if="j.contentType.startsWith('image/')">
-                                <img :src="j.url" />
-                            </div>
-                            <div v-else>
-                                <a class="media link" :href="j.url">
-                                    {{ j.name }}
-                                </a>
-                            </div>
-                        </div>
-                    </div>
+                <div class="content has-vertically-spaced-small" v-if="props.media.length">
+                    <discussion-post-box-media :id="props.id" :media="props.media" />
                 </div>
-            </div>
+            </discussion-post-box>
         </div>
     </div>
 </template>
   
 <script setup>
-import DragonLightIcon from "../assets/DragonLightIcon.png"
+import DiscussionPostBox from './DiscussionPostBox.vue';
+
+import DiscussionPostBoxContent from './DiscussionPostBoxContent.vue';
+import DiscussionPostBoxMedia from './DiscussionPostBoxMedia.vue';
 
 const props = defineProps({
     "id": {
@@ -91,14 +53,6 @@ const props = defineProps({
         type: String,
         required: true,
     },
-});
-
-const authorProfileAvatar = computed(() => {
-    const { id, avatarHash } = props.user;
-    if (!avatarHash) {
-        return DragonLightIcon;
-    }
-    return `https://cdn.discordapp.com/avatars/${id}/${avatarHash}`
 });
 </script>
   
