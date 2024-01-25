@@ -21,7 +21,7 @@ COPY --from=builder \
     /workplace
 RUN chown -R \
         3000:3000 \
-        /.npm /workplace
+        /workplace
 USER 3000
 EXPOSE 3000
 CMD ["node", "server/index.mjs"]
