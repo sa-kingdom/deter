@@ -67,6 +67,14 @@ if (error.value) {
   console.error(error.value)
 }
 
+useHead({
+  title: data.value.name,
+})
+
+definePageMeta({
+  layout: 'clear'
+})
+
 const ownerProfileAvatar = computed(() => {
   const { id, avatarHash } = data.value.user;
   if (!avatarHash) {

@@ -28,6 +28,8 @@ export default defineNuxtConfig({
   },
   devtools: { enabled: true },
   runtimeConfig: {
+    githubRepositoryUrl: 'https://github.com/sa-kingdom?q=deter',
+    discordServerUrl: 'https://discord.gg/Hr4XQt7Eay',
     apiBaseUrl: 'http://localhost:3000',
   }
 })
