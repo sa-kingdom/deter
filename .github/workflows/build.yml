@@ -44,4 +44,4 @@ jobs:
       - name: Trigger deploy webhook
         uses: wei/curl@master
         with:
-          args: ${{ secrets.DEPLOY_WEBHOOK_URL }}
+          args: -X PUT ${{ secrets.DEPLOY_WEBHOOK_URL }}
