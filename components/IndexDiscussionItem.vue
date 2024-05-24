@@ -23,6 +23,8 @@
 <script setup>
 import DragonLightIcon from "../assets/DragonLightIcon.png"
 
+const {apiBaseUrl} = useRuntimeConfig();
+
 const props = defineProps({
   "id": {
     type: String,
@@ -67,6 +69,6 @@ const ownerProfileAvatar = computed(() => {
     if (!avatarHash) {
         return DragonLightIcon;
     }
-    return `https://cdn.discordapp.com/avatars/${id}/${avatarHash}`
+    return `${apiBaseUrl}/assets/images/avatar-${id}`;
 });
 </script>
