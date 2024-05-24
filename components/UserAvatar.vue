@@ -7,7 +7,7 @@
 <script setup>
 import DragonLightIcon from "../assets/DragonLightIcon.png"
 
-const {apiBaseUrl} = useRuntimeConfig();
+const {apiPublicBaseUrl} = useRuntimeConfig();
 
 const props = defineProps({
     "id": {
@@ -25,6 +25,6 @@ const avatarUrl = computed(() => {
     if (!avatarHash) {
         return DragonLightIcon;
     }
-    return `${apiBaseUrl}/assets/images/avatar-${id}`;
+    return `${apiPublicBaseUrl}/assets/images/avatar-${id}`;
 });
 </script>

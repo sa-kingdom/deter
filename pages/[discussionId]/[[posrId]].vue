@@ -54,13 +54,13 @@ import DragonLightIcon from "../assets/DragonLightIcon.png"
 
 import discussionPost from "../../components/DiscussionPost.vue";
 
-const { apiBaseUrl } = useRuntimeConfig();
+const { apiInvokeBaseUrl, apiPublicBaseUrl } = useRuntimeConfig();
 const route = useRoute();
 
 const { discussionId } = route.params;
 const { data, pending, error, refresh } = await useAsyncData(
   'discussion-data',
-  () => $fetch(`${apiBaseUrl}/discussions/${discussionId}`)
+  () => $fetch(`${apiInvokeBaseUrl}/discussions/${discussionId}`)
 );
 
 if (error.value) {
@@ -80,6 +80,6 @@ const ownerProfileAvatar = computed(() => {
   if (!avatarHash) {
     return DragonLightIcon;
   }
-    return `${apiBaseUrl}/assets/images/avatar-${id}`;
+    return `${apiPublicBaseUrl}/assets/images/avatar-${id}`;
 });
 </script>
