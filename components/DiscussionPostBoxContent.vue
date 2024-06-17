@@ -26,11 +26,14 @@
                 </a>
             </span>
         </span>
+        <br v-if="j.type === 'br'" />
     </span>
 </template>
 
 <script setup>
 import DiscussionPostBoxContent from './DiscussionPostBoxContent.vue';
+
+console.log(Array.from(props.content).map(i=>i.content));
 
 const props = defineProps({
     "id": {
