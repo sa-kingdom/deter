@@ -45,6 +45,7 @@ const baseUrlMedia = "https://media.discordapp.net";
 /**
  * Mapping emoji id into imeage url.
  * @param {string} emojiId - The image id of the emoji to convert into a URL.
+ * @return {string} - The url of emoji image.
  */
 function toEmojiUrl(emojiId) {
     return `${baseUrlCdn}/emojis/${emojiId}`;
@@ -53,7 +54,7 @@ function toEmojiUrl(emojiId) {
 /**
  * Check if the url is a attachment URL.
  * @param {string} url - The URL to check.
- * @returns {boolean} - True if the url is a attachment URL. False otherwise.
+ * @return {boolean} - True if the url is a attachment URL. False otherwise.
  */
 function isAttachmentUrl(url) {
     return url.startsWith(`${baseUrlMedia}/attachments/`);
