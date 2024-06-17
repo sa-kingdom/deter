@@ -13,11 +13,10 @@
             {{ j.name }}
         </span>
         <span class="ts-text emoji" v-if="j.type === 'emoji'">
-            <img class="ts-icon" :src="`https://cdn.discordapp.com/emojis/${j.id}`" />
+            <img class="ts-icon" :src="toEmojiUrl(j.id)" />
         </span>
         <span class="ts-text url" v-if="j.type === 'url'">
-            <span class="ts-image is-rounded is-bordered"
-                v-if="j.target.startsWith('https://media.discordapp.net/attachments/')">
+            <span class="ts-image is-rounded is-bordered" v-if="isAttachmentUrl(j.target)">
                 <img :src="j.target" />
             </span>
             <span v-else>
@@ -33,7 +32,32 @@
 <script setup>
 import DiscussionPostBoxContent from './DiscussionPostBoxContent.vue';
 
-console.log(Array.from(props.content).map(i=>i.content));
+/**
+ * Base urls for CDN and Media endpoints in Discord's API, used when rendering attachments or embedded content like images/gifv etc..
+ */
+const baseUrlCdn = "https://cdn.discordapp.com";
+
+/**
+ * Base urls for Media endpoints in Discord's API, used when rendering attachments or embedded content like images/gifv etc..
+ */
+const baseUrlMedia = "https://media.discordapp.net";
+
+/**
+ * Mapping emoji id into imeage url.
+ * @param {string} emojiId - The image id of the emoji to convert into a URL.
+ */
+function toEmojiUrl(emojiId) {
+    return `${baseUrlCdn}/emojis/${emojiId}`;
+}
+
+/**
+ * Check if the url is a attachment URL.
+ * @param {string} url - The URL to check.
+ * @returns {boolean} - True if the url is a attachment URL. False otherwise.
+ */
+function isAttachmentUrl(url) {
+    return url.startsWith(`${baseUrlMedia}/attachments/`);
+}
 
 const props = defineProps({
     "id": {
@@ -48,13 +72,13 @@ const props = defineProps({
 </script>
 
 <style scoped>
-.spoiler{
-  background-color: gray;
-  color: transparent;
+.spoiler {
+    background-color: gray;
+    color: transparent;
 }
 
-.spoiler:hover{
-  background-color: inherit;
-  color: inherit;
+.spoiler:hover {
+    background-color: inherit;
+    color: inherit;
 }
 </style>
