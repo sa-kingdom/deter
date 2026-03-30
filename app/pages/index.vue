@@ -5,9 +5,9 @@
 <script setup>
 import IndexDiscussionItem from "../components/IndexDiscussionItem.vue";
 
-const { apiInvokeBaseUrl } = useRuntimeConfig();
+const { apiInvokeBaseUrl } = useRuntimeConfig().public;
 
-const { data, pending, error, refresh } = await useAsyncData(
+const {data, error} = await useAsyncData(
   'discussions',
   () => $fetch(`${apiInvokeBaseUrl}/discussions`)
 );

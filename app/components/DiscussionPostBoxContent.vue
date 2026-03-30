@@ -1,23 +1,23 @@
 <template>
     <span v-for="(j, i) in props.content" :key="i">
-        <span class="ts-text plain" v-if="j.type === 'text'">
+        <span v-if="j.type === 'text'" class="ts-text plain">
             {{ j.content }}
         </span>
-        <span class="ts-text is-deleted strikethrough" v-if="j.type === 'strikethrough'">
+        <span v-if="j.type === 'strikethrough'" class="ts-text is-deleted strikethrough">
             <discussion-post-box-content :id="props.id" :content="j.content" />
         </span>
-        <span class="ts-text spoiler" v-if="j.type === 'spoiler'">
+        <span v-if="j.type === 'spoiler'" class="ts-text spoiler">
             <discussion-post-box-content :id="props.id" :content="j.content" />
         </span>
-        <span class="ts-text twemoji" v-if="j.type === 'twemoji'">
+        <span v-if="j.type === 'twemoji'" class="ts-text twemoji">
             {{ j.name }}
         </span>
-        <span class="ts-text emoji" v-if="j.type === 'emoji'">
-            <img class="ts-icon" :src="toEmojiUrl(j.id)" />
+        <span v-if="j.type === 'emoji'" class="ts-text emoji">
+            <img class="ts-icon" :src="toEmojiUrl(j.id)" >
         </span>
-        <span class="ts-text url" v-if="j.type === 'url'">
-            <span class="ts-image is-rounded is-bordered" v-if="isAttachmentUrl(j.target)">
-                <img :src="j.target" />
+        <span v-if="j.type === 'url'" class="ts-text url">
+            <span v-if="isAttachmentUrl(j.target)" class="ts-image is-rounded is-bordered">
+                <img :src="j.target" >
             </span>
             <span v-else>
                 <a :href="j.target">
@@ -25,7 +25,7 @@
                 </a>
             </span>
         </span>
-        <br v-if="j.type === 'br'" />
+        <br v-if="j.type === 'br'" >
     </span>
 </template>
 
