@@ -3,7 +3,7 @@
     <div class="ts-grid">
       <div class="column">
         <div class="ts-avatar is-large is-circular">
-          <img :src="ownerProfileAvatar" />
+          <img :src="ownerProfileAvatar" >
         </div>
       </div>
       <div class="column is-fluid">
@@ -23,7 +23,7 @@
 <script setup>
 import DragonLightIcon from "../assets/DragonLightIcon.png"
 
-const {apiPublicBaseUrl} = useRuntimeConfig();
+const {apiPublicBaseUrl} = useRuntimeConfig().public;
 
 const props = defineProps({
   "id": {
