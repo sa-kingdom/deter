@@ -4,7 +4,7 @@
       <div class="ts-container">
         <div class="navbar ts-tab is-center-aligned">
           <a href="/" class="item is-active">
-            <span class="ts-icon is-dragon-icon"></span>
+            <span class="ts-icon is-dragon-icon"/>
             Deter 迪特
           </a>
         </div>

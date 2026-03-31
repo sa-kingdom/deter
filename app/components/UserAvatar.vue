@@ -1,13 +1,13 @@
 <template>
     <div class="ts-avatar is-large is-circular">
-        <img :src="avatarUrl" />
+        <img :src="avatarUrl" >
     </div>
 </template>
 
 <script setup>
 import DragonLightIcon from "../assets/DragonLightIcon.png"
 
-const {apiPublicBaseUrl} = useRuntimeConfig();
+const {apiPublicBaseUrl} = useRuntimeConfig().public;
 
 const props = defineProps({
     "id": {

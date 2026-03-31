@@ -4,14 +4,14 @@
             <div class="ts-container">
                 <div class="navbar ts-tab is-center-aligned">
                     <a href="/" class="item is-active">
-                        <span class="ts-icon is-dragon-icon"></span>
+                        <span class="ts-icon is-dragon-icon"/>
                         Deter 迪特
                     </a>
                 </div>
             </div>
         </div>
         <div class="ts-blankslate">
-            <span class="ts-icon is-ban-icon"></span>
+            <span class="ts-icon is-ban-icon"/>
             <div class="header">發生了些錯誤</div>
             <div class="description">
                 <div class="ts-meta is-small is-secondary">
@@ -23,7 +23,7 @@
                     </span>
                 </div>
                 <div class="has-vertically-spaced-small">
-                    錯誤代號：{{ error.statusCode }}<br />
+                    錯誤代號：{{ error.statusCode }}<br >
                     錯誤原因："{{ error.statusMessage }}"
                 </div>
             </div>
@@ -37,8 +37,11 @@
 </template>
   
 <script setup>
-const props = defineProps({
-    error: Object
+defineProps({
+    error: {
+        type: Object,
+        default: () => ({})
+    }
 });
 
 const router = useRouter();
