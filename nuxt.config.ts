@@ -1,5 +1,9 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
+  compatibilityDate: '2025-07-15',
+  future: {
+    compatibilityVersion: 4,
+  },
   app: {
     head: {
       title: '看板',
@@ -19,18 +23,20 @@ export default defineNuxtConfig({
       ]
     },
   },
-  modules: ['dayjs-nuxt'],
-  dayjs: {
-    locales: ['zh-tw'],
-    plugins: ['relativeTime', 'utc', 'timezone'],
-    defaultLocale: 'en',
-    defaultTimezone: 'America/New_York',
-  },
+  modules: [
+    '@nuxt/eslint',
+    '@nuxt/image',
+    '@nuxt/scripts',
+    '@nuxt/test-utils'
+  ],
   devtools: { enabled: true },
+  nitro: { preset: 'bun' },
   runtimeConfig: {
-    githubRepositoryUrl: 'https://github.com/sa-kingdom?q=deter',
-    discordServerUrl: 'https://discord.gg/Hr4XQt7Eay',
-    apiInvokeBaseUrl: 'http://localhost:3000',
-    apiPublicBaseUrl: 'http://localhost:3000',
+    public: {
+      githubRepositoryUrl: 'https://github.com/sa-kingdom?q=deter',
+      discordServerUrl: 'https://discord.gg/Hr4XQt7Eay',
+      apiInvokeBaseUrl: 'http://localhost:3000',
+      apiPublicBaseUrl: 'http://localhost:3000',
+    }
   }
 })
