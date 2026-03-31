@@ -1,5 +1,7 @@
 <template>
-  <index-discussion-item v-for="(j, i) in data" :key="i" v-bind="j" />
+  <div>
+    <index-discussion-item v-for="(j, i) in data" :key="i" v-bind="j" />
+  </div>
 </template>
 
 <script setup>

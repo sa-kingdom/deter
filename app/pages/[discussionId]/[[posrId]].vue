@@ -26,10 +26,9 @@
           </div>
         </div>
       </div>
-      <div v-if="!pending" class="column is-9-wide mobile:is-16-wide">
+      <div class="column is-9-wide mobile:is-16-wide">
         <discussion-post v-for="(j, i) in data.posts" :key="i" v-bind="j" :users="data.users" />
       </div>
-      <div v-else class="column is-9-wide mobile:is-16-wide"/>
       <div class="column is-4-wide mobile:ts-app-drawer">
         <div style="position: sticky; top: 1rem">
           <div class="ts-menu is-start-icon is-separated">
@@ -51,13 +50,13 @@
 <script setup>
 import DragonLightIcon from "~/assets/DragonLightIcon.png"
 
-import discussionPost from "~/components/DiscussionPost.vue";
+import DiscussionPost from "~/components/DiscussionPost.vue";
 
 const { apiInvokeBaseUrl, apiPublicBaseUrl } = useRuntimeConfig().public;
 const route = useRoute();
 
 const { discussionId } = route.params;
-const {data, pending, error} = await useAsyncData(
+const {data, error} = await useAsyncData(
   'discussion-data',
   () => $fetch(`${apiInvokeBaseUrl}/discussions/${discussionId}`)
 );
