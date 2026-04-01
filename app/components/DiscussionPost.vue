@@ -2,8 +2,8 @@
     <div class="ts-segment has-top-spaced">
         <div class="ts-grid">
             <discussion-post-box
-:id="props.id" :created-at="props.createdAt" :user-id="props.userId"
-                :display-name="props.user.displayName" :avatar-hash="props.user.avatarHash">
+              :id="props.id" :created-at="props.createdAt" :user-id="props.userId"
+              :display-name="props.user.displayName" :avatar-hash="props.user.avatarHash">
                 <div v-if="props.content.length" class="content has-vertically-spaced-small">
                     <discussion-post-box-content :id="props.id" :content="props.content" />
                 </div>
