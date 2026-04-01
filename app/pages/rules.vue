@@ -166,6 +166,6 @@
 
 <script setup>
 useHead({
-  title: "全站版規",
-})
+  title: '全站版規',
+});
 </script>
