@@ -35,40 +35,40 @@ import DiscussionPostBoxContent from './DiscussionPostBoxContent.vue';
 /**
  * Base urls for CDN and Media endpoints in Discord's API, used when rendering attachments or embedded content like images/gifv etc..
  */
-const baseUrlCdn = "https://cdn.discordapp.com";
+const baseUrlCdn = 'https://cdn.discordapp.com';
 
 /**
  * Base urls for Media endpoints in Discord's API, used when rendering attachments or embedded content like images/gifv etc..
  */
-const baseUrlMedia = "https://media.discordapp.net";
+const baseUrlMedia = 'https://media.discordapp.net';
 
 /**
  * Mapping emoji id into imeage url.
- * @param {string} emojiId - The image id of the emoji to convert into a URL.
- * @return {string} - The url of emoji image.
+ * @param emojiId - The image id of the emoji to convert into a URL.
+ * @returns - The url of emoji image.
  */
 function toEmojiUrl(emojiId) {
-    return `${baseUrlCdn}/emojis/${emojiId}`;
+  return `${baseUrlCdn}/emojis/${emojiId}`;
 }
 
 /**
  * Check if the url is a attachment URL.
- * @param {string} url - The URL to check.
- * @return {boolean} - True if the url is a attachment URL. False otherwise.
+ * @param url - The URL to check.
+ * @returns - True if the url is a attachment URL. False otherwise.
  */
 function isAttachmentUrl(url) {
-    return url.startsWith(`${baseUrlMedia}/attachments/`);
+  return url.startsWith(`${baseUrlMedia}/attachments/`);
 }
 
 const props = defineProps({
-    "id": {
-        type: String,
-        required: true,
-    },
-    "content": {
-        type: Array,
-        required: true,
-    },
+  'id': {
+    type: String,
+    required: true,
+  },
+  'content': {
+    type: Array,
+    required: true,
+  },
 });
 </script>
 

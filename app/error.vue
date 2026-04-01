@@ -35,18 +35,21 @@
         </div>
     </div>
 </template>
-  
+
 <script setup>
 defineProps({
-    error: {
-        type: Object,
-        default: () => ({})
-    }
+  error: {
+    type: Object,
+    default: () => ({}),
+  },
 });
 
 const router = useRouter();
 
+/**
+ *
+ */
 function onClickGoHome() {
-    router.push("/");
+  router.push('/');
 }
 </script>

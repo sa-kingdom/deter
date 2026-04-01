@@ -15,28 +15,28 @@
 </template>
 
 <script setup>
-import UserAvatar from "./UserAvatar.vue";
+import UserAvatar from './UserAvatar.vue';
 
 const props = defineProps({
-    "id": {
-        type: String,
-        required: true,
-    },
-    "userId": {
-        type: String,
-        required: true,
-    },
-    "createdAt": {
-        type: String,
-        required: true,
-    },
-    "displayName": {
-        type: String,
-        required: true,
-    },
-    "avatarHash": {
-        type: String,
-        required: true,
-    },
+  'id': {
+    type: String,
+    required: true,
+  },
+  'userId': {
+    type: String,
+    required: true,
+  },
+  'createdAt': {
+    type: String,
+    required: true,
+  },
+  'displayName': {
+    type: String,
+    required: true,
+  },
+  'avatarHash': {
+    type: String,
+    required: true,
+  },
 });
 </script>
