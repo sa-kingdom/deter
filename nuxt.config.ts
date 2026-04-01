@@ -35,7 +35,7 @@ export default defineNuxtConfig({
     public: {
       githubRepositoryUrl: 'https://github.com/sa-kingdom?q=deter',
       discordServerUrl: 'https://discord.gg/Hr4XQt7Eay',
-      apiInvokeBaseUrl: 'http://localhost:3000',
+      apiInvokeBaseUrl: '/api',
       apiPublicBaseUrl: 'http://localhost:3000',
     },
   },
