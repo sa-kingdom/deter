@@ -1,4 +1,5 @@
 import {Sequelize, DataTypes, Model} from 'sequelize';
+import * as mysql2 from 'mysql2';
 
 const config = useRuntimeConfig();
 
@@ -8,6 +9,7 @@ export const sequelize = new Sequelize(
     config.database.pass,
     {
       dialect: 'mysql',
+      dialectModule: mysql2,
       host: config.database.host,
       port: Number(config.database.port),
       logging: config.database.logging,
