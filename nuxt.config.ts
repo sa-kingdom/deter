@@ -30,13 +30,18 @@ export default defineNuxtConfig({
     '@nuxt/test-utils',
   ],
   devtools: {enabled: true},
-  nitro: {preset: 'bun'},
+  nitro: {
+    preset: 'bun',
+    externals: {
+      external: ['mysql2'],
+    },
+  },
   runtimeConfig: {
     public: {
       githubRepositoryUrl: 'https://github.com/sa-kingdom?q=deter',
       discordServerUrl: 'https://discord.gg/Hr4XQt7Eay',
-      apiInvokeBaseUrl: '/api',
       apiPublicBaseUrl: 'http://localhost:3000',
+      apiInvokeBaseUrl: '/api',
     },
     database: {
       name: 'deter',
