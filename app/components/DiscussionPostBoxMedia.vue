@@ -13,13 +13,13 @@
 
 <script setup>
 const props = defineProps({
-    "id": {
-        type: String,
-        required: true,
-    },
-    "media": {
-        type: Object,
-        required: true,
-    },
+  'id': {
+    type: String,
+    required: true,
+  },
+  'media': {
+    type: Object,
+    required: true,
+  },
 });
 </script>

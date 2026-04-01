@@ -5,16 +5,15 @@
 </template>
 
 <script setup>
-import IndexDiscussionItem from "../components/IndexDiscussionItem.vue";
+import IndexDiscussionItem from '../components/IndexDiscussionItem.vue';
 
-const { apiInvokeBaseUrl } = useRuntimeConfig().public;
+const {apiInvokeBaseUrl} = useRuntimeConfig().public;
 
-const {data, error} = await useAsyncData(
-  'discussions',
-  () => $fetch(`${apiInvokeBaseUrl}/discussions`)
-);
+const {data, error} = await useFetch(`${apiInvokeBaseUrl}/discussions`, {
+  key: 'discussions',
+});
 
 if (error.value) {
-  console.error(error.value)
+  console.error(error.value);
 }
 </script>

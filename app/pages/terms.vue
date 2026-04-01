@@ -38,6 +38,6 @@
 
 <script setup>
 useHead({
-  title: "服務條款",
-})
+  title: '服務條款',
+});
 </script>

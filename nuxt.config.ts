@@ -11,32 +11,32 @@ export default defineNuxtConfig({
       meta: [
         {
           name: 'description',
-          content: '在名為 Discord 的高速公路風馳電掣的論壇系統！在 Discord 建立公開論壇？騙人的吧...'
-        }
+          content: '在名為 Discord 的高速公路風馳電掣的論壇系統！在 Discord 建立公開論壇？騙人的吧...',
+        },
       ],
       link: [
-        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap' },
-        { rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/tocas/4.2.5/tocas.min.css' },
+        {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap'},
+        {rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/tocas/4.2.5/tocas.min.css'},
       ],
       script: [
-        { src: 'https://cdnjs.cloudflare.com/ajax/libs/tocas/4.2.5/tocas.min.js' }
-      ]
+        {src: 'https://cdnjs.cloudflare.com/ajax/libs/tocas/4.2.5/tocas.min.js'},
+      ],
     },
   },
   modules: [
     '@nuxt/eslint',
     '@nuxt/image',
     '@nuxt/scripts',
-    '@nuxt/test-utils'
+    '@nuxt/test-utils',
   ],
-  devtools: { enabled: true },
-  nitro: { preset: 'bun' },
+  devtools: {enabled: true},
+  nitro: {preset: 'bun'},
   runtimeConfig: {
     public: {
       githubRepositoryUrl: 'https://github.com/sa-kingdom?q=deter',
       discordServerUrl: 'https://discord.gg/Hr4XQt7Eay',
-      apiInvokeBaseUrl: 'http://localhost:3000',
+      apiInvokeBaseUrl: '/api',
       apiPublicBaseUrl: 'http://localhost:3000',
-    }
-  }
-})
+    },
+  },
+});

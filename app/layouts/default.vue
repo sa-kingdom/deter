@@ -70,7 +70,7 @@
 </template>
 
 <script setup>
-import DragonLightIcon from "../assets/DragonLightIcon.png"
+import DragonLightIcon from '../assets/DragonLightIcon.png';
 
 const {
   githubRepositoryUrl,
