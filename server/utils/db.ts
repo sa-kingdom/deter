@@ -99,7 +99,7 @@ Media.init(
       duration: DataTypes.FLOAT,
       waveform: DataTypes.TEXT,
     },
-    {sequelize, modelName: 'media'},
+    {sequelize, timestamps: false, modelName: 'media'},
 );
 
 // Define associations
@@ -108,8 +108,9 @@ Discussion.hasMany(Post);
 
 Post.belongsTo(User);
 Post.belongsTo(Discussion);
-Post.belongsToMany(Media, {through: 'PostMedia'});
-Media.belongsToMany(Post, {through: 'PostMedia'});
+Post.hasMany(Media);
+Post.belongsToMany(Media, {through: 'post_media'});
+Media.belongsToMany(Post, {through: 'post_media'});
 
 // Initialize connection
 sequelize.authenticate().catch(
