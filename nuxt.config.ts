@@ -32,9 +32,6 @@ export default defineNuxtConfig({
   devtools: {enabled: true},
   nitro: {
     preset: 'bun',
-    externals: {
-      external: ['mysql2'],
-    },
   },
   runtimeConfig: {
     public: {
