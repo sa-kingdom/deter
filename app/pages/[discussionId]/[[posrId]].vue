@@ -56,10 +56,9 @@ const {apiInvokeBaseUrl, apiPublicBaseUrl} = useRuntimeConfig().public;
 const route = useRoute();
 
 const {discussionId} = route.params;
-const {data, error} = await useAsyncData(
-    'discussion-data',
-    () => $fetch(`${apiInvokeBaseUrl}/discussions/${discussionId}`),
-);
+const {data, error} = await useFetch(`${apiInvokeBaseUrl}/discussions/${discussionId}`, {
+  key: 'discussion-data',
+});
 
 if (error.value) {
   console.error(error.value);
