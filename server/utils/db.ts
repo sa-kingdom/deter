@@ -3,14 +3,14 @@ import {Sequelize, DataTypes, Model} from 'sequelize';
 const config = useRuntimeConfig();
 
 export const sequelize = new Sequelize(
-    config.dbName || process.env.SEQUELIZE_DB_NAME || '',
-    config.dbUser || process.env.SEQUELIZE_DB_USER || '',
-    config.dbPass || process.env.SEQUELIZE_DB_PASS || '',
+    config.database.name,
+    config.database.user,
+    config.database.pass,
     {
-      host: config.dbHost || process.env.SEQUELIZE_DB_HOST || 'localhost',
-      port: Number(config.dbPort || process.env.SEQUELIZE_DB_PORT || 3306),
       dialect: 'mysql',
-      logging: false,
+      host: config.database.host,
+      port: Number(config.database.port),
+      logging: config.database.logging,
     },
 );
 
