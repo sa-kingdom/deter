@@ -5,26 +5,26 @@
 </template>
 
 <script setup>
-import DragonLightIcon from "../assets/DragonLightIcon.png"
+import DragonLightIcon from '../assets/DragonLightIcon.png';
 
 const {apiPublicBaseUrl} = useRuntimeConfig().public;
 
 const props = defineProps({
-    "id": {
-        type: String,
-        required: true,
-    },
-    "avatarHash": {
-        type: String,
-        required: true,
-    },
+  'id': {
+    type: String,
+    required: true,
+  },
+  'avatarHash': {
+    type: String,
+    required: true,
+  },
 });
 
 const avatarUrl = computed(() => {
-    const { id, avatarHash } = props;
-    if (!avatarHash) {
-        return DragonLightIcon;
-    }
-    return `${apiPublicBaseUrl}/assets/images/avatar-${id}`;
+  const {id, avatarHash} = props;
+  if (!avatarHash) {
+    return DragonLightIcon;
+  }
+  return `${apiPublicBaseUrl}/assets/images/avatar-${id}`;
 });
 </script>

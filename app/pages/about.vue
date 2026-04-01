@@ -15,6 +15,6 @@
 
 <script setup>
 useHead({
-  title: "關於 Deter 迪特",
-})
+  title: '關於 Deter 迪特',
+});
 </script>

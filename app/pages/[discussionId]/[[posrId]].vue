@@ -48,36 +48,36 @@
 </template>
 
 <script setup>
-import DragonLightIcon from "~/assets/DragonLightIcon.png"
+import DragonLightIcon from '~/assets/DragonLightIcon.png';
 
-import DiscussionPost from "~/components/DiscussionPost.vue";
+import DiscussionPost from '~/components/DiscussionPost.vue';
 
-const { apiInvokeBaseUrl, apiPublicBaseUrl } = useRuntimeConfig().public;
+const {apiInvokeBaseUrl, apiPublicBaseUrl} = useRuntimeConfig().public;
 const route = useRoute();
 
-const { discussionId } = route.params;
+const {discussionId} = route.params;
 const {data, error} = await useAsyncData(
-  'discussion-data',
-  () => $fetch(`${apiInvokeBaseUrl}/discussions/${discussionId}`)
+    'discussion-data',
+    () => $fetch(`${apiInvokeBaseUrl}/discussions/${discussionId}`),
 );
 
 if (error.value) {
-  console.error(error.value)
+  console.error(error.value);
 }
 
 useHead({
   title: data.value.name,
-})
+});
 
 definePageMeta({
-  layout: 'clear'
-})
+  layout: 'clear',
+});
 
 const ownerProfileAvatar = computed(() => {
-  const { id, avatarHash } = data.value.user;
+  const {id, avatarHash} = data.value.user;
   if (!avatarHash) {
     return DragonLightIcon;
   }
-    return `${apiPublicBaseUrl}/assets/images/avatar-${id}`;
+  return `${apiPublicBaseUrl}/assets/images/avatar-${id}`;
 });
 </script>

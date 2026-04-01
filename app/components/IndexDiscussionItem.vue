@@ -21,54 +21,54 @@
 </template>
 
 <script setup>
-import DragonLightIcon from "../assets/DragonLightIcon.png"
+import DragonLightIcon from '../assets/DragonLightIcon.png';
 
 const {apiPublicBaseUrl} = useRuntimeConfig().public;
 
 const props = defineProps({
-  "id": {
+  'id': {
     type: String,
     required: true,
   },
-  "name": {
+  'name': {
     type: String,
     required: true,
   },
-  "userId": {
+  'userId': {
     type: String,
     required: true,
   },
-  "user": {
+  'user': {
     type: Object,
     required: true,
   },
-  "lastMessageId": {
+  'lastMessageId': {
     type: String,
     required: true,
   },
-  "messageCount": {
+  'messageCount': {
     type: Number,
     required: true,
   },
-  "memberCount": {
+  'memberCount': {
     type: Number,
     required: true,
   },
-  "createdAt": {
+  'createdAt': {
     type: String,
     required: true,
   },
-  "updatedAt": {
+  'updatedAt': {
     type: String,
     required: true,
   },
 });
 
 const ownerProfileAvatar = computed(() => {
-    const { id, avatarHash } = props.user;
-    if (!avatarHash) {
-        return DragonLightIcon;
-    }
-    return `${apiPublicBaseUrl}/assets/images/avatar-${id}`;
+  const {id, avatarHash} = props.user;
+  if (!avatarHash) {
+    return DragonLightIcon;
+  }
+  return `${apiPublicBaseUrl}/assets/images/avatar-${id}`;
 });
 </script>

@@ -127,6 +127,6 @@
 
 <script setup>
 useHead({
-  title: "隱私權政策",
-})
+  title: '隱私權政策',
+});
 </script>

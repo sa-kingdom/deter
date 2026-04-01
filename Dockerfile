@@ -1,27 +1,24 @@
-FROM node:20-alpine as builder
-RUN mkdir -p /factory
-WORKDIR /factory
-COPY . /factory
-RUN npm install
-RUN npm run build
+# Wings Dockerfile
+# Bun based multi-stage build for Nuxt 4 application
 
-FROM node:20-alpine
-RUN addgroup \
-        -g 3000 \
-        scarlet
-RUN adduser -HD \
-        -u 3000 \
-        -G scarlet \
-        -h /workplace \
-        flandre
-RUN mkdir -p /workplace
-WORKDIR /workplace
-COPY --from=builder \
-    /factory/.output \
-    /workplace
-RUN chown -R \
-        3000:3000 \
-        /workplace
+FROM oven/bun:alpine AS factory
+WORKDIR /app
+COPY package.json bun.lock ./
+RUN bun install
+COPY . ./
+RUN bun run build
+
+FROM oven/bun:alpine
+WORKDIR /app
+COPY --from=factory /app/.output/ ./
+COPY --from=factory /app/docker-entrypoint.sh /docker-entrypoint.sh
+ENV BUN_INSTALL=/bun
+ENV NUXT_PORT=3000
+ENV NUXT_HOST=0.0.0.0
+RUN chmod +x /docker-entrypoint.sh
+RUN bun install -g pm2
+RUN adduser -u 3000 -D wings
+RUN chown -R 3000:3000 /app
 USER 3000
 EXPOSE 3000
-CMD ["node", "server/index.mjs"]
+ENTRYPOINT ["/docker-entrypoint.sh"]
