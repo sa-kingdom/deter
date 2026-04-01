@@ -108,7 +108,6 @@ Discussion.hasMany(Post);
 
 Post.belongsTo(User);
 Post.belongsTo(Discussion);
-Post.hasMany(Media);
 Post.belongsToMany(Media, {through: 'post_media'});
 Media.belongsToMany(Post, {through: 'post_media'});
 
