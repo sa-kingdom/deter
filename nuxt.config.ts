@@ -38,5 +38,13 @@ export default defineNuxtConfig({
       apiInvokeBaseUrl: '/api',
       apiPublicBaseUrl: 'http://localhost:3000',
     },
+    database: {
+      name: 'deter',
+      user: 'deter',
+      pass: 'deter',
+      host: '127.0.0.1',
+      port: '3306',
+      logging: false,
+    },
   },
 });
