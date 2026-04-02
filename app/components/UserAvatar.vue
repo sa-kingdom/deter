@@ -16,7 +16,8 @@ const props = defineProps({
   },
   'avatarHash': {
     type: String,
-    required: true,
+    required: false,
+    default: () => '',
   },
 });
 
