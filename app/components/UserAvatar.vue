@@ -25,6 +25,6 @@ const avatarUrl = computed(() => {
   if (!avatarHash) {
     return DragonLightIcon;
   }
-  return `${apiPublicBaseUrl}/assets/images/avatar-${id}`;
+  return `${apiPublicBaseUrl}/assets/images/avatar-${id}-${avatarHash}`;
 });
 </script>
