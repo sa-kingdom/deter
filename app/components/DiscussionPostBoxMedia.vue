@@ -1,9 +1,9 @@
 <template>
-    <div v-for="(j, i) in props.media" :key="i">
+    <div v-for="j in props.media" :key="j.id">
         <div v-if="j.contentType.startsWith('image/')" class="media image ts-image is-rounded is-bordered">
             <img :src="`${apiPublicBaseUrl}/assets/media-${j.id}`" >
         </div>
-        <div v-else-if="j.contentType === 'application/x-lottie+json' || (j.contentType === 'application/json' && !j.name.endsWith('.json'))" class="media sticker">
+        <div v-else-if="j.contentType === 'application/x-lottie+json'" class="media sticker">
             <ClientOnly>
                 <Vue3Lottie
                     :animation-link="`${apiPublicBaseUrl}/assets/media-${j.id}`"
