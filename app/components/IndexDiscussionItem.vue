@@ -69,6 +69,6 @@ const ownerProfileAvatar = computed(() => {
   if (!avatarHash) {
     return DragonLightIcon;
   }
-  return `${apiPublicBaseUrl}/assets/images/avatar-${id}-${avatarHash}`;
+  return `${apiPublicBaseUrl}/assets/avatar-${id}-${avatarHash}`;
 });
 </script>
