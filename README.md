@@ -1,132 +1,107 @@
-# Wings
+# Deter (迪特)
 
-一個基於 Nuxt、Vite 和 Tailwind CSS，為敏捷開發而生的全端專案範本。
+> A high-speed forum system running on the Discord highway.
 
-A boilerplate for agile full-stack development, powered by Nuxt, Vite, and Tailwind CSS.
+Deter is a lightweight, modern forum frontend and discussion API designed specifically for Discord communities. It provides a seamless transition from real-time Discord chat to a structured forum experience.
 
-## 系統架構 System Architecture
+## System Architecture
 
-本專案採用 Nuxt 4 + Vue 3 + Tailwind CSS 打造，使用 Bun 作為開發與編譯工具。
+Deter is part of a dual-system architecture designed for high performance and reliability:
 
-This project is built with Nuxt 4 + Vue 3 + Tailwind CSS, using Bun as the development and build tool.
+- **Dunya (Backend/Syncer)**: Responsible for syncing data from Discord guilds to a local database and caching media (avatars, attachments). **Dunya holds sole responsibility for database schema management (table creation, updates, and migrations).**
+- **Deter (Frontend/API)**: A sleek web interface and API that consumes the data synced by Dunya. Deter is a **database consumer only** and serves cached media via the `/assets` directory.
 
-### 技術棧 Tech Stack
+## Tech Stack
 
-- **Nuxt 4**: 全端 Vue.js 框架，提供 SSR/SSG 支援
-  - Full-stack Vue.js framework with SSR/SSG support
-- **Vue 3**: 使用 Composition API
-  - Using Composition API
-- **Vite**: 極速的前端建置工具
-  - Lightning-fast frontend build tool
-- **@nuxt/ui**: UI 元件庫
-  - UI component library
-- **@nuxt/image**: 圖片最佳化
-  - Image optimization
-- **Tailwind CSS**: 工具類優先的 CSS 框架
-  - Utility-first CSS framework
-- **TypeScript**: 型別安全支援
-  - Type safety support
+- **Framework**: [Nuxt 4](https://nuxt.com/) (Vue 3 with Composition API)
+- **Runtime**: [Bun](https://bun.sh/) (Fast package manager, runner, and bundler)
+- **UI Library**: [Tocas UI](https://tocasui.com/) (A modern, clean UI framework)
+- **Database Layer**: [Sequelize](https://sequelize.org/) (connecting to MySQL/MariaDB managed by Dunya)
+- **Animations**: [Vue3-Lottie](https://github.com/chenqingspring/vue3-lottie) (for Discord sticker support)
 
-## 系統設定 Setup
+## Key Features
 
-### 安裝相依套件 Install Dependencies
+- **Discord-Integrated Forum**: Provides a structured view of Discord discussions.
+- **Media Serving**: Efficiently serves Discord avatars and attachments cached locally by Dunya to prevent expired CDN links.
+- **Rich Content Support**:
+  - Discord-style markdown and mention resolution.
+  - Role-based color indicators.
+  - Support for Discord stickers, including **animated Lottie stickers**.
+- **SEO Optimized**: Built-in SEO best practices for better discoverability.
+- **Micro-animations**: Smooth transitions and interactions for a premium experience.
 
-本專案使用 Bun 作為套件管理器。
+## Setup
 
-This project uses Bun as the package manager.
+### Prerequisites
 
-請先安裝 [Bun](https://bun.sh/)。
+- **Bun**: Ensure you have [Bun](https://bun.sh/) installed.
+- **Dunya**: A running instance of Dunya is required to populate the database and cache media.
 
-Please install [Bun](https://bun.sh/) first.
-
-該指令會安裝專案所需的相依套件。
-
-This command will install the required dependencies for the project.
+### Installation
 
 ```sh
 bun install
 ```
 
-### 開發除錯模式 Development Mode
+### Development
 
-該指令會啟動開發除錯模式，可配合瀏覽器進行開發。當網頁變動時，會自動重新載入。
-
-This command starts the development server for debugging. It automatically reloads when files change.
+Start the development server with automatic reloading:
 
 ```sh
 bun run dev
 ```
 
-### 正式產品模式 Production Build
+### Production
 
-該指令會將專案編譯成正式產品模式，壓縮檔案並進行最佳化，最後輸出至 `.output` 目錄。
-
-This command compiles the project for production, compresses files, and optimizes them. The output will be in the `.output` directory.
+Compile the project for production, optimizing and outputting to the `.output` directory:
 
 ```sh
 bun run build
 ```
 
-### 本機預覽 Local Preview
-
-在本機預覽生產環境編譯後的成果。
-
-Preview the production build locally.
+Preview the production build locally:
 
 ```sh
 bun run preview
 ```
 
-## 專案結構 Project Structure
+## Project Structure
 
-```tree
-├── app/
-│   ├── app.vue          # 應用程式進入點
-│   ├── assets/          # 靜態資源 (CSS、圖片等)
-│   ├── components/      # Vue 元件
-│   ├── composables/     # Composition API 函式
-│   ├── layouts/         # 佈局模板
-│   └── pages/           # 頁面 (自動路由)
-├── public/              # 公開靜態檔案
-├── nuxt.config.ts       # Nuxt 設定檔
-└── package.json         # 專案依賴
+```text
+├── app/                  # Frontend application (Nuxt 4)
+│   ├── components/       # Reusable Vue components
+│   ├── layouts/          # Page layouts
+│   ├── pages/            # View pages (auto-routed)
+│   └── plugins/          # Client-side and server-side plugins
+├── public/               # Public static files
+├── server/               # Backend API and server-side utilities
+│   ├── api/              # API endpoints
+│   └── utils/            # Shared database models and utilities
+├── nuxt.config.ts        # Nuxt configuration
+└── package.json          # Project dependencies
 ```
 
-```tree
-├── app/
-│   ├── app.vue          # Application entry point
-│   ├── assets/          # Static assets (CSS, images, etc.)
-│   ├── components/      # Vue components
-│   ├── composables/     # Composition API functions
-│   ├── layouts/         # Layout templates
-│   └── pages/           # Pages (auto-routing)
-├── public/              # Public static files
-├── nuxt.config.ts       # Nuxt configuration
-└── package.json         # Project dependencies
-```
+## Environment Variables
 
-## 環境變數 Environment Variables
-
-複製 `.env` 檔案並根據需求修改：
-
-Copy the `.env` file and modify it according to your needs:
+Copy `.env.example` (if available) or create a `.env` file with the following configuration:
 
 ```env
-NUXT_PUBLIC_HOME_INTE_HOST=https://web-tech.tw
-NUXT_PUBLIC_SARA_INTE_HOST=https://web-tech.tw/sara
-NUXT_PUBLIC_SARA_TOKEN_NAME=unified_token
+# Database Configuration (Matching Dunya)
+NUXT_DATABASE_NAME=deter
+NUXT_DATABASE_USER=deter
+NUXT_DATABASE_PASS=password
+NUXT_DATABASE_HOST=127.0.0.1
+NUXT_DATABASE_PORT=3306
+
+# API Configuration
+NUXT_PUBLIC_API_INVOKE_BASE_URL=/api
+NUXT_PUBLIC_API_PUBLIC_BASE_URL=http://localhost:3000
 ```
 
-## 開放原始碼授權 Open Source License
+## Open Source License
 
-本專案採用 MIT 開放原始碼授權。
-
-This project is licensed under the MIT License.
-
-詳細可參閱 [LICENSE](LICENSE) 檔案。
-
-See the [LICENSE](LICENSE) file for details.
+This project is licensed under the MIT License. See the [LICENSE](LICENSE) file for details.
 
 ---
 
-&copy; [Taiwan Web Technology Promotion Organization](https://web-tech.tw)
+&copy; [Star Inc.](https://starinc.xyz)
