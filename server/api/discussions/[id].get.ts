@@ -3,8 +3,8 @@ import {parse} from 'discord-markdown-parser';
 
 const MENTION_USER_REGEX = /<@!?(\d+)>/g;
 const MENTION_ROLE_REGEX = /<@&(\d+)>/g;
-const UNKNOWN_USER = '未知使用者';
-const UNKNOWN_ROLE = '未知角色';
+const UNKNOWN_USER = 'Unknown User';
+const UNKNOWN_ROLE = 'Unknown Role';
 
 /**
  * Escapes characters that are special in markdown.
