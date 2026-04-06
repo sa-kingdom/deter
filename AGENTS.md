@@ -32,3 +32,10 @@ This repository follows a strict workflow. All AI agents (including assistants a
   - `ci:`: Changes to CI configuration scripts and tools.
   - `build:`: Changes that affect the build system or external dependencies.
 - **Git Hooks**: Since you are an AI agent, remember to use `HUSKY=0` prefix (e.g. `HUSKY=0 git commit -m "..."`) to bypass all Git hooks and avoid being stuck by interactive terminals.
+
+## Project Architecture & Functionalities
+
+Deter is a forum frontend and discussion API that consumes data synced by Dunya.
+
+- **Database Responsibility**: **Deter is a database consumer only. Dunya holds the sole responsibility for database schema management, including table creation, field updates, and migrations.** Do not attempt to modify the database schema from within the Deter repository.
+- **Media Serving**: Deter serves Discord avatars and attachments cached by Dunya via the `/assets` directory.
