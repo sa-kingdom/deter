@@ -12,7 +12,7 @@ const UNKNOWN_ROLE = 'Unknown Role';
  * @returns The escaped text.
  */
 function escapeMarkdown(text: string): string {
-  return text.replace(/[\\*_`~|]/g, '\\$&');
+  return text.replace(/[\\*_`~|[\]]/g, '\\$&');
 }
 
 export default defineEventHandler(async (event) => {
