@@ -1,6 +1,20 @@
 import {Discussion, User, Post, Media, Member, Role} from '../../utils/db';
 import {parse} from 'discord-markdown-parser';
 
+const MENTION_USER_REGEX = /<@!?(\d+)>/g;
+const MENTION_ROLE_REGEX = /<@&(\d+)>/g;
+const UNKNOWN_USER = '未知使用者';
+const UNKNOWN_ROLE = '未知角色';
+
+/**
+ * Escapes characters that are special in markdown.
+ * @param text The text to escape.
+ * @returns The escaped text.
+ */
+function escapeMarkdown(text: string): string {
+  return text.replace(/[\\*_`~|]/g, '\\$&');
+}
+
 export default defineEventHandler(async (event) => {
   const discussionId = getRouterParam(event, 'id');
 
@@ -31,9 +45,9 @@ export default defineEventHandler(async (event) => {
     const roleIds = new Set<string>();
     for (const post of result.posts) {
       if (post.content) {
-        const memberMatches = post.content.matchAll(/<@!?(\d+)>/g);
+        const memberMatches = post.content.matchAll(MENTION_USER_REGEX);
         for (const match of memberMatches) memberIds.add(match[1]);
-        const roleMatches = post.content.matchAll(/<@&(\d+)>/g);
+        const roleMatches = post.content.matchAll(MENTION_ROLE_REGEX);
         for (const match of roleMatches) roleIds.add(match[1]);
       }
     }
@@ -56,18 +70,18 @@ export default defineEventHandler(async (event) => {
         let content = post.content;
         // Resolve user mentions
         content = content.replace(
-            /<@!?(\d+)>/g,
-            (match: string, id: string) => {
+            MENTION_USER_REGEX,
+            (_match: string, id: string) => {
               const name = memberMap.get(id);
-              return name ? `@${name}` : '@未知使用者';
+              return name ? `@${escapeMarkdown(name)}` : `@${UNKNOWN_USER}`;
             },
         );
         // Resolve role mentions
         content = content.replace(
-            /<@&(\d+)>/g,
-            (match: string, id: string) => {
+            MENTION_ROLE_REGEX,
+            (_match: string, id: string) => {
               const name = roleMap.get(id);
-              return name ? `@${name}` : '@未知角色';
+              return name ? `@${escapeMarkdown(name)}` : `@${UNKNOWN_ROLE}`;
             },
         );
 
