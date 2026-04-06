@@ -10,6 +10,9 @@ This repository follows a strict workflow. All AI agents (including assistants a
     - NEVER target `main` directly for features or refinements.
     - ALWAYS create a feature branch (e.g. `feat/lottie-sticker-support`) and target `rolling` as the base branch.
     - The repository follows a `rolling -> main` flow for deployments.
+    - **Review Workflow**:
+        - Once a PR is created, ALWAYS run `/gemini review` after every commit.
+        - If you disagree with a review, ALWAYS use `/gemini {{message}}` to provide justification.
 
 ## Tool Usage and Code Editing
 
