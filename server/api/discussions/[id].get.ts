@@ -40,8 +40,12 @@ export default defineEventHandler(async (event) => {
 
     // Fetch member and role names from database
     const [members, roles] = await Promise.all([
-      Member.findAll({where: {id: Array.from(memberIds)}}),
-      Role.findAll({where: {id: Array.from(roleIds)}}),
+      memberIds.size > 0 ?
+        Member.findAll({where: {id: Array.from(memberIds)}}) :
+        [],
+      roleIds.size > 0 ?
+        Role.findAll({where: {id: Array.from(roleIds)}}) :
+        [],
     ]);
 
     const memberMap = new Map(members.map((m) => [m.id, m.displayName]));
@@ -66,9 +70,6 @@ export default defineEventHandler(async (event) => {
               return name ? `@${name}` : '@未知角色';
             },
         );
-        // Ensure @everyone and @here are treated as resolved text
-        content = content.replace(/@everyone/g, '@everyone');
-        content = content.replace(/@here/g, '@here');
 
         post.content = parse(content);
       }
