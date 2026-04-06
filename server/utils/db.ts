@@ -102,6 +102,32 @@ Media.init(
     {sequelize, timestamps: false, modelName: 'media'},
 );
 
+export class Member extends Model {
+  declare id: string;
+  declare displayName: string;
+}
+
+Member.init(
+    {
+      id: {type: DataTypes.STRING, primaryKey: true},
+      displayName: DataTypes.STRING,
+    },
+    {sequelize, modelName: 'member'},
+);
+
+export class Role extends Model {
+  declare id: string;
+  declare name: string;
+}
+
+Role.init(
+    {
+      id: {type: DataTypes.STRING, primaryKey: true},
+      name: DataTypes.STRING,
+    },
+    {sequelize, modelName: 'role'},
+);
+
 // Define associations
 Discussion.belongsTo(User);
 Discussion.hasMany(Post);
