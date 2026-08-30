@@ -28,9 +28,9 @@ export function flarumToDiscordMarkdown(
 
   let text = raw;
 
-  // If wrapped in <t>...</t>, it is plain text or raw markdown.
+  // If wrapped in <t>...</t>, strip the container tag.
   if (text.startsWith('<t>') && text.endsWith('</t>')) {
-    return decodeHtmlEntities(text.slice(3, -4)).trim();
+    text = text.slice(3, -4);
   }
 
   // 1. Mentions
@@ -145,10 +145,11 @@ export function flarumToDiscordMarkdown(
 
   // Paragraphs and breaks
   text = text.replace(/<br\s*\/?>/gi, '\n');
-  text = text.replace(/<p>([\s\S]*?)<\/p>/gi, '$1\n\n');
+  text = text.replace(/<p\b[^>]*>([\s\S]*?)<\/p>/gi, '$1\n\n');
 
-  // Strip container tags <r>, </r>, <LIST>, </LIST>
-  text = text.replace(/<\/?(?:r|LIST)[^>]*>/gi, '');
+  // Strip container tags <r>, </r>, <t>, </t>, <LIST>, </LIST>, <p>, </p>
+  text = text.replace(/<\/?(?:r|t|p|LIST)\b[^>]*>/gi, '');
+  text = text.replace(/\n{3,}/g, '\n\n');
 
   // Handle standard BBCode in case of non-s9e BBCode
   text = text.replace(/\[b\]([\s\S]*?)\[\/b\]/gi, '**$1**');

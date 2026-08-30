@@ -24,6 +24,14 @@ describe('flarumFormatter', () => {
       expect(flarumToDiscordMarkdown(input)).toBe('**Bold** & *italic*');
     });
 
+    it('strips <p> and <br> tags inside <t> tags', () => {
+      const input = '<t><p>discord的</p></t>';
+      expect(flarumToDiscordMarkdown(input)).toBe('discord的');
+
+      const multiline = '<t><p>第一行<br/>第二行</p></t>';
+      expect(flarumToDiscordMarkdown(multiline)).toBe('第一行\n第二行');
+    });
+
     it('converts mentions', () => {
       const userMention =
         '<r><USERMENTION id="1" username="alice">@"alice"#1</USERMENTION></r>';
