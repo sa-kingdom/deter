@@ -4,7 +4,7 @@
     class="ts-segment is-interactive has-top-spaced"
     style="display: block; text-decoration: none; color: inherit;"
   >
-    <!-- modern Author Meta Line -->
+    <!-- Author Meta Line -->
     <div class="ts-wrap is-middle-aligned is-compact has-bottom-spaced-small">
       <div class="ts-avatar is-circular is-small">
         <img
@@ -20,6 +20,13 @@
       <span class="ts-text is-secondary is-small" :title="props.createdAt">
         {{ $dayjs(props.createdAt).fromNow() }}
       </span>
+      <span
+        v-for="collection in (props.collections || props.tags || [])"
+        :key="collection.id"
+        class="ts-badge is-small is-outlined is-secondary"
+      >
+        {{ collection.name }}
+      </span>
     </div>
 
     <!-- Post Title -->
@@ -30,7 +37,7 @@
       {{ props.name }}
     </div>
 
-    <!-- modern Actions / Stats Bar -->
+    <!-- Actions / Stats Bar -->
     <div class="ts-wrap is-compact has-top-spaced-small">
       <span class="ts-badge is-secondary is-small">
         <span class="ts-icon is-comments-icon" />
@@ -92,6 +99,14 @@ const props = defineProps({
   'updatedAt': {
     type: String,
     required: true,
+  },
+  'tags': {
+    type: Array,
+    default: () => [],
+  },
+  'collections': {
+    type: Array,
+    default: () => [],
   },
 });
 
