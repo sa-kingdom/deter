@@ -30,16 +30,16 @@ export default defineEventHandler(async () => {
     rows.map((d) => {
       const u = d.user;
       return {
-        id: `nex-${d.id}`,
+        id: `N${d.id}`,
         name: d.title,
-        userId: d.userId ? `nex-${d.userId}` : 'unknown',
-        lastMessageId: d.lastPostId ? `nex-${d.lastPostId}` : '',
+        userId: d.userId ? `N${d.userId}` : 'unknown',
+        lastMessageId: d.lastPostId ? `N${d.lastPostId}` : '',
         messageCount: d.commentCount ?? 0,
         memberCount: d.participantCount ?? 0,
         createdAt: d.createdAt,
         updatedAt: d.lastPostedAt || d.createdAt,
         user: {
-          id: u ? `nex-${u.id}` : 'unknown',
+          id: u ? `N${u.id}` : 'unknown',
           username: u ? u.username : 'Unknown User',
           displayName: u ? u.username : 'Unknown User',
           avatarHash: u?.avatarUrl || '',
