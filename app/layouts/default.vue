@@ -135,7 +135,11 @@
               :class="{'is-active': activeCollection === col.slug}"
               @click="isDrawerOpen = false"
             >
-              <span class="ts-icon is-hashtag-icon" /> {{ col.name }}
+              <span
+                class="ts-icon"
+                :class="col.icon || 'is-hashtag-icon'"
+              />
+              {{ col.name }}
             </NuxtLink>
           </div>
 
@@ -220,7 +224,11 @@
                   class="item"
                   :class="{'is-active': activeCollection === col.slug}"
                 >
-                  <span class="ts-icon is-hashtag-icon" /> {{ col.name }}
+                  <span
+                    class="ts-icon"
+                    :class="col.icon || 'is-hashtag-icon'"
+                  />
+                  {{ col.name }}
                 </NuxtLink>
               </div>
             </div>

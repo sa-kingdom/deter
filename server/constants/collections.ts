@@ -3,6 +3,7 @@ export interface Collection {
   name: string;
   slug: string;
   color?: string | null;
+  // Tocas UI icon class name, e.g. 'is-comments-icon'
   icon?: string | null;
   parentId?: number | null;
 }
@@ -13,7 +14,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '網站建議/回報',
     slug: 'official-2',
     color: '#888',
-    icon: 'fas fa-tools',
+    icon: 'is-wrench-icon',
     parentId: null,
   },
   {
@@ -21,7 +22,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '站方',
     slug: 'official',
     color: '#575D90',
-    icon: 'fas fa-user-shield',
+    icon: 'is-user-shield-icon',
     parentId: null,
   },
   {
@@ -29,7 +30,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '集中串',
     slug: 'concentrated',
     color: '#008994',
-    icon: 'fas fa-university',
+    icon: 'is-layer-group-icon',
     parentId: null,
   },
   {
@@ -37,7 +38,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '綜合',
     slug: 'all',
     color: '#0471A6',
-    icon: 'far fa-comment-dots',
+    icon: 'is-comment-dots-icon',
     parentId: null,
   },
   {
@@ -45,7 +46,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '閒聊',
     slug: 'chat',
     color: '#37718E',
-    icon: 'fas fa-comments',
+    icon: 'is-comments-icon',
     parentId: 4,
   },
   {
@@ -53,7 +54,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '廢文',
     slug: 'shitpost',
     color: '#15AABF',
-    icon: 'fas fa-box-open',
+    icon: 'is-box-open-icon',
     parentId: null,
   },
   {
@@ -61,7 +62,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '心情',
     slug: 'mood',
     color: '#AC2949',
-    icon: 'fas fa-heartbeat',
+    icon: 'is-heart-pulse-icon',
     parentId: null,
   },
   {
@@ -69,7 +70,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '認真',
     slug: 'serious',
     color: '#5c03eb',
-    icon: 'fas fa-envelope-open-text',
+    icon: 'is-envelope-open-text-icon',
     parentId: null,
   },
   {
@@ -77,7 +78,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '問題',
     slug: 'question',
     color: '#d45150',
-    icon: 'fas fa-question',
+    icon: 'is-circle-question-icon',
     parentId: 4,
   },
   {
@@ -85,7 +86,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '寶拉',
     slug: 'Paula',
     color: '#3A445D',
-    icon: 'fas fa-archive',
+    icon: 'is-box-archive-icon',
     parentId: 4,
   },
   {
@@ -93,7 +94,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '八卦',
     slug: 'Gossiping',
     color: '#26408B',
-    icon: 'fas fa-comments',
+    icon: 'is-comments-icon',
     parentId: 4,
   },
   {
@@ -101,7 +102,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '音樂',
     slug: 'music',
     color: '#3A445D',
-    icon: 'fas fa-music',
+    icon: 'is-music-icon',
     parentId: 4,
   },
   {
@@ -109,7 +110,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '動漫',
     slug: 'anime',
     color: '#417B5A',
-    icon: 'fas fa-tv',
+    icon: 'is-tv-icon',
     parentId: 4,
   },
   {
@@ -117,7 +118,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '創作',
     slug: 'creation',
     color: '#CC3363',
-    icon: 'fas fa-pencil-ruler',
+    icon: 'is-pen-ruler-icon',
     parentId: null,
   },
   {
@@ -125,7 +126,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '教學',
     slug: 'teaching',
     color: '#F50853',
-    icon: 'fas fa-chalkboard',
+    icon: 'is-chalkboard-user-icon',
     parentId: 4,
   },
   {
@@ -133,7 +134,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '遊戲',
     slug: 'games',
     color: '#1E55FC',
-    icon: 'fas fa-gamepad',
+    icon: 'is-gamepad-icon',
     parentId: null,
   },
   {
@@ -141,7 +142,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '推坑',
     slug: 'recommend',
     color: '#F783AC',
-    icon: 'fas fa-hand-holding-heart',
+    icon: 'is-hand-holding-heart-icon',
     parentId: 4,
   },
   {
@@ -149,7 +150,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '程式',
     slug: 'code',
     color: '#2C497F',
-    icon: 'fas fa-code',
+    icon: 'is-code-icon',
     parentId: 4,
   },
   {
@@ -157,7 +158,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '政治',
     slug: 'political',
     color: '#A85102',
-    icon: 'fas fa-person-booth',
+    icon: 'is-person-booth-icon',
     parentId: 4,
   },
   {
@@ -165,7 +166,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '新聞',
     slug: 'news',
     color: '#038030',
-    icon: 'far fa-newspaper',
+    icon: 'is-newspaper-icon',
     parentId: 4,
   },
   {
@@ -173,7 +174,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'YouTuber',
     slug: 'youtuber',
     color: '#FF5505',
-    icon: 'fab fa-youtube',
+    icon: 'is-youtube-icon',
     parentId: 4,
   },
   {
@@ -181,7 +182,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '戲劇',
     slug: 'tv-series',
     color: '#FD7E19',
-    icon: 'fas fa-film',
+    icon: 'is-film-icon',
     parentId: 4,
   },
   {
@@ -189,7 +190,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '輔導級內容',
     slug: 'PG15',
     color: '',
-    icon: 'fas fa-exclamation-circle',
+    icon: 'is-circle-exclamation-icon',
     parentId: null,
   },
   {
@@ -197,7 +198,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '真人成人',
     slug: 'porn',
     color: '#FF0033',
-    icon: 'fas fa-exclamation-triangle',
+    icon: 'is-triangle-exclamation-icon',
     parentId: 38,
   },
   {
@@ -205,7 +206,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '二次元成人',
     slug: 'porn-2',
     color: '#FF3300',
-    icon: 'fas fa-exclamation-triangle',
+    icon: 'is-triangle-exclamation-icon',
     parentId: 38,
   },
   {
@@ -213,7 +214,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'Nex 開發社群',
     slug: 'nex',
     color: '#96f',
-    icon: 'fas fa-terminal',
+    icon: 'is-terminal-icon',
     parentId: null,
   },
   {
@@ -221,7 +222,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '繪畫',
     slug: 'artist',
     color: '#aa3a00',
-    icon: 'fas fa-pen',
+    icon: 'is-pen-icon',
     parentId: 14,
   },
   {
@@ -229,7 +230,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '小說',
     slug: 'writer',
     color: '#cc00bb',
-    icon: 'fas fa-book-open',
+    icon: 'is-book-open-icon',
     parentId: 14,
   },
   {
@@ -237,7 +238,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '封存',
     slug: 'Archive',
     color: '#116677',
-    icon: 'fas fa-file-archive',
+    icon: 'is-file-zipper-icon',
     parentId: 1,
   },
   {
@@ -245,7 +246,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '處理中',
     slug: 'proccessing',
     color: '#0077ff',
-    icon: 'fas fa-server',
+    icon: 'is-server-icon',
     parentId: 1,
   },
   {
@@ -253,7 +254,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '公告',
     slug: 'announcement',
     color: '#555',
-    icon: 'fas fa-bullhorn',
+    icon: 'is-bullhorn-icon',
     parentId: 2,
   },
   {
@@ -261,7 +262,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '預告',
     slug: 'notice',
     color: '#666',
-    icon: 'fas fa-fire',
+    icon: 'is-fire-icon',
     parentId: 2,
   },
   {
@@ -269,7 +270,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '規範',
     slug: 'term',
     color: '#888',
-    icon: 'fas fa-check',
+    icon: 'is-check-icon',
     parentId: 2,
   },
   {
@@ -277,7 +278,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '計畫',
     slug: 'plan',
     color: '#999',
-    icon: 'fas fa-rss',
+    icon: 'is-rss-icon',
     parentId: 2,
   },
   {
@@ -285,7 +286,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '處分名單',
     slug: 'ban',
     color: '#f00',
-    icon: 'fas fa-ban',
+    icon: 'is-ban-icon',
     parentId: 2,
   },
   {
@@ -293,7 +294,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'VTuber',
     slug: 'VTuber',
     color: '#6bb2ee',
-    icon: 'fas fa-cloud',
+    icon: 'is-cloud-icon',
     parentId: 4,
   },
   {
@@ -301,7 +302,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '手冊',
     slug: 'manual',
     color: '#0af',
-    icon: 'fas fa-atlas',
+    icon: 'is-book-icon',
     parentId: 2,
   },
   {
@@ -309,7 +310,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '管制區',
     slug: 'restrict',
     color: '#f00',
-    icon: 'fas fa-exclamation',
+    icon: 'is-circle-exclamation-icon',
     parentId: null,
   },
   {
@@ -317,7 +318,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '安價',
     slug: 'cheap',
     color: '#e102e3',
-    icon: 'fas fa-money-check',
+    icon: 'is-money-check-dollar-icon',
     parentId: 4,
   },
   {
@@ -325,7 +326,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '瀏覽器附加元件',
     slug: 'browser-exts',
     color: '',
-    icon: 'fas fa-globe',
+    icon: 'is-globe-icon',
     parentId: 26,
   },
   {
@@ -333,7 +334,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'Android',
     slug: 'android',
     color: '',
-    icon: 'fab fa-android',
+    icon: 'is-android-icon',
     parentId: 26,
   },
   {
@@ -341,7 +342,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'iOS',
     slug: 'ios',
     color: '',
-    icon: 'fab fa-apple',
+    icon: 'is-apple-icon',
     parentId: 26,
   },
   {
@@ -349,7 +350,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'macOS',
     slug: 'macos',
     color: '',
-    icon: 'fas fa-laptop',
+    icon: 'is-laptop-icon',
     parentId: 26,
   },
   {
@@ -357,7 +358,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'Web',
     slug: 'web',
     color: '',
-    icon: 'fab fa-firefox',
+    icon: 'is-firefox-browser-icon',
     parentId: 26,
   },
   {
@@ -365,7 +366,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '其他',
     slug: 'other',
     color: '',
-    icon: 'fas fa-external-link-square-alt',
+    icon: 'is-arrow-up-right-from-square-icon',
     parentId: 26,
   },
   {
@@ -373,7 +374,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '開發文獻',
     slug: 'documentation',
     color: '',
-    icon: 'fas fa-book',
+    icon: 'is-book-icon',
     parentId: 26,
   },
   {
@@ -381,7 +382,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'Windows',
     slug: 'windows',
     color: '',
-    icon: 'fab fa-windows',
+    icon: 'is-windows-icon',
     parentId: 26,
   },
   {
@@ -389,7 +390,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'Linux',
     slug: 'linux',
     color: '',
-    icon: 'fab fa-linux',
+    icon: 'is-linux-icon',
     parentId: 26,
   },
   {
@@ -397,7 +398,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '英雄聯盟',
     slug: 'league-of-legends',
     color: '',
-    icon: '',
+    icon: 'is-shield-halved-icon',
     parentId: 16,
   },
   {
@@ -405,7 +406,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'Apex 英雄',
     slug: 'apex',
     color: '',
-    icon: '',
+    icon: 'is-crosshairs-icon',
     parentId: 16,
   },
   {
@@ -413,7 +414,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '絕地求生',
     slug: 'pubg',
     color: '',
-    icon: '',
+    icon: 'is-person-rifle-icon',
     parentId: 16,
   },
   {
@@ -421,7 +422,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '手機平台',
     slug: 'mobile-platform',
     color: '',
-    icon: 'fas fa-mobile',
+    icon: 'is-mobile-screen-icon',
     parentId: 16,
   },
   {
@@ -429,7 +430,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '桌機平台',
     slug: 'pc-platform',
     color: '',
-    icon: 'fas fa-desktop',
+    icon: 'is-desktop-icon',
     parentId: 16,
   },
   {
@@ -437,7 +438,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'PS 平台',
     slug: 'ps-platform',
     color: '',
-    icon: 'fab fa-playstation',
+    icon: 'is-playstation-icon',
     parentId: 16,
   },
   {
@@ -445,7 +446,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: 'XBOX 平台',
     slug: 'xbox-platform',
     color: '',
-    icon: 'fab fa-xbox',
+    icon: 'is-xbox-icon',
     parentId: 16,
   },
   {
@@ -453,7 +454,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '其他平台',
     slug: 'other-platform',
     color: '',
-    icon: 'fas fa-chess-knight',
+    icon: 'is-chess-knight-icon',
     parentId: 16,
   },
   {
@@ -461,7 +462,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '情報',
     slug: 'game-news',
     color: '',
-    icon: 'fas fa-newspaper',
+    icon: 'is-newspaper-icon',
     parentId: 16,
   },
   {
@@ -469,7 +470,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '攻略',
     slug: 'walkthrough',
     color: '',
-    icon: 'fas fa-puzzle-piece',
+    icon: 'is-puzzle-piece-icon',
     parentId: 16,
   },
   {
@@ -477,7 +478,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '其他遊戲',
     slug: 'other-game',
     color: '',
-    icon: '',
+    icon: 'is-gamepad-icon',
     parentId: 16,
   },
   {
@@ -485,7 +486,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '貓貓',
     slug: 'meow',
     color: '#116688',
-    icon: 'fas fa-cat',
+    icon: 'is-cat-icon',
     parentId: 4,
   },
   {
@@ -493,7 +494,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '決戰！平安京',
     slug: 'onmyoji arena',
     color: '',
-    icon: '',
+    icon: 'is-torii-gate-icon',
     parentId: 16,
   },
   {
@@ -501,7 +502,7 @@ export const COLLECTIONS: readonly Collection[] = [
     name: '傳說對決',
     slug: 'aov',
     color: '',
-    icon: '',
+    icon: 'is-gamepad-icon',
     parentId: 16,
   },
 ] as const;
