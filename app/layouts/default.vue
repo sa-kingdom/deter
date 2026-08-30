@@ -126,7 +126,7 @@
           >
             看板
           </div>
-          <div class="ts-menu is-separated is-dense">
+          <div class="ts-menu is-start-icon is-separated is-dense">
             <NuxtLink
               v-for="col in topLevelCollections"
               :key="col.slug"
@@ -135,7 +135,7 @@
               :class="{'is-active': activeCollection === col.slug}"
               @click="isDrawerOpen = false"
             >
-              {{ col.name }}
+              <span class="ts-icon is-hashtag-icon" /> {{ col.name }}
             </NuxtLink>
           </div>
 
@@ -212,7 +212,7 @@
               >
                 看板
               </div>
-              <div class="ts-menu is-separated is-dense">
+              <div class="ts-menu is-start-icon is-separated is-dense">
                 <NuxtLink
                   v-for="col in topLevelCollections"
                   :key="col.slug"
@@ -220,7 +220,7 @@
                   class="item"
                   :class="{'is-active': activeCollection === col.slug}"
                 >
-                  {{ col.name }}
+                  <span class="ts-icon is-hashtag-icon" /> {{ col.name }}
                 </NuxtLink>
               </div>
             </div>
