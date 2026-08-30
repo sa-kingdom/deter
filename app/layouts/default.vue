@@ -112,35 +112,35 @@
           <div class="ts-menu is-start-icon is-separated is-dense">
             <NuxtLink
               to="/"
-              class="item is-active"
+              class="item"
+              :class="{'is-active': !activeCollection}"
               @click="isDrawerOpen = false"
             >
               <span class="ts-icon is-house-icon" /> 全部話題
             </NuxtLink>
           </div>
 
-          <!-- Communities -->
+          <!-- Collections -->
           <div
             class="ts-text is-secondary is-small is-bold has-top-spaced has-bottom-spaced-small"
           >
             看板
           </div>
           <div class="ts-menu is-start-icon is-separated is-dense">
-            <a href="#!" class="item">
-              <span class="ts-icon is-comments-icon" /> 八卦
-            </a>
-            <a href="#!" class="item">
-              <span class="ts-icon is-box-icon" /> 廢文
-            </a>
-            <a href="#!" class="item">
-              <span class="ts-icon is-store-icon" /> 市集
-            </a>
-            <a href="#!" class="item">
-              <span class="ts-icon is-flag-icon" /> 站方
-            </a>
-            <a href="#!" class="item">
-              <span class="ts-icon is-star-icon" /> 精華
-            </a>
+            <NuxtLink
+              v-for="col in topLevelCollections"
+              :key="col.slug"
+              :to="{path: '/', query: {collection: col.slug}}"
+              class="item"
+              :class="{'is-active': activeCollection === col.slug}"
+              @click="isDrawerOpen = false"
+            >
+              <span
+                class="ts-icon"
+                :class="col.icon || 'is-hashtag-icon'"
+              />
+              {{ col.name }}
+            </NuxtLink>
           </div>
 
           <div class="ts-divider is-section" />
@@ -200,7 +200,11 @@
                 探索
               </div>
               <div class="ts-menu is-start-icon is-separated is-dense">
-                <NuxtLink to="/" class="item is-active">
+                <NuxtLink
+                  to="/"
+                  class="item"
+                  :class="{'is-active': !activeCollection}"
+                >
                   <span class="ts-icon is-house-icon" /> 全部話題
                 </NuxtLink>
               </div>
@@ -213,21 +217,19 @@
                 看板
               </div>
               <div class="ts-menu is-start-icon is-separated is-dense">
-                <a href="#!" class="item">
-                  <span class="ts-icon is-comments-icon" /> 八卦
-                </a>
-                <a href="#!" class="item">
-                  <span class="ts-icon is-box-icon" /> 廢文
-                </a>
-                <a href="#!" class="item">
-                  <span class="ts-icon is-store-icon" /> 市集
-                </a>
-                <a href="#!" class="item">
-                  <span class="ts-icon is-flag-icon" /> 站方
-                </a>
-                <a href="#!" class="item">
-                  <span class="ts-icon is-star-icon" /> 精華
-                </a>
+                <NuxtLink
+                  v-for="col in topLevelCollections"
+                  :key="col.slug"
+                  :to="{path: '/', query: {collection: col.slug}}"
+                  class="item"
+                  :class="{'is-active': activeCollection === col.slug}"
+                >
+                  <span
+                    class="ts-icon"
+                    :class="col.icon || 'is-hashtag-icon'"
+                  />
+                  {{ col.name }}
+                </NuxtLink>
               </div>
             </div>
           </div>
@@ -291,13 +293,15 @@
 </template>
 
 <script setup>
-import {ref} from 'vue';
+import {ref, computed} from 'vue';
 import DragonLightIcon from '../assets/DragonLightIcon.png';
 
 const isDrawerOpen = ref(false);
 const isPageNavigating = ref(false);
 
 const router = useRouter();
+const route = useRoute();
+
 router.beforeEach((to, from) => {
   if (to.path !== from.path) {
     isPageNavigating.value = true;
@@ -314,6 +318,23 @@ nuxtApp.hook('page:start', () => {
 nuxtApp.hook('page:finish', () => {
   isPageNavigating.value = false;
 });
+
+const activeCollection = computed(() =>
+  route.query.collection ?
+    String(route.query.collection) :
+    null,
+);
+
+const {apiInvokeBaseUrl} = useRuntimeConfig().public;
+
+const {data: collectionsData} = await useFetch(
+    `${apiInvokeBaseUrl}/collections`,
+    {key: 'collections'},
+);
+
+const topLevelCollections = computed(
+    () => collectionsData.value || [],
+);
 
 const {
   githubRepositoryUrl,
