@@ -32,8 +32,8 @@ export default defineEventHandler(async (event) => {
   }
 
   // Handle legacy Flarum discussion
-  if (discussionId.startsWith('nex-')) {
-    const rawId = discussionId.slice(4);
+  if (discussionId.startsWith('N')) {
+    const rawId = discussionId.slice(1);
     const flarumId = parseInt(rawId, 10);
     if (isNaN(flarumId)) {
       throw createError({
@@ -86,15 +86,15 @@ export default defineEventHandler(async (event) => {
       const postUser = post.user;
       const md = flarumToDiscordMarkdown(post.content);
       return {
-        id: `nex-${post.id}`,
+        id: `N${post.id}`,
         content: parse(md),
-        userId: postUser ? `nex-${postUser.id}` : 'unknown',
+        userId: postUser ? `N${postUser.id}` : 'unknown',
         media: [],
         createdAt: post.createdAt,
         updatedAt: post.editedAt || post.createdAt,
         discussionId,
         user: {
-          id: postUser ? `nex-${postUser.id}` : 'unknown',
+          id: postUser ? `N${postUser.id}` : 'unknown',
           username: postUser ? postUser.username : 'Unknown User',
           displayName: postUser ? postUser.username : 'Unknown User',
           avatarHash: postUser?.avatarUrl || '',
@@ -105,16 +105,16 @@ export default defineEventHandler(async (event) => {
     return {
       id: discussionId,
       name: legacyDiscussion.title,
-      userId: u ? `nex-${u.id}` : 'unknown',
+      userId: u ? `N${u.id}` : 'unknown',
       lastMessageId: legacyDiscussion.lastPostId ?
-        `nex-${legacyDiscussion.lastPostId}` :
+        `N${legacyDiscussion.lastPostId}` :
         '',
       messageCount: legacyDiscussion.commentCount ?? 0,
       memberCount: legacyDiscussion.participantCount ?? 0,
       createdAt: legacyDiscussion.createdAt,
       updatedAt: legacyDiscussion.lastPostedAt || legacyDiscussion.createdAt,
       user: {
-        id: u ? `nex-${u.id}` : 'unknown',
+        id: u ? `N${u.id}` : 'unknown',
         username: u ? u.username : 'Unknown User',
         displayName: u ? u.username : 'Unknown User',
         avatarHash: u?.avatarUrl || '',
