@@ -1,4 +1,10 @@
 import {Discussion, User, Post, Media, Member, Role} from '../../utils/db';
+import {
+  FlarumDiscussion,
+  FlarumUser,
+  FlarumPost,
+} from '../../utils/flarumDb';
+import {flarumToDiscordMarkdown} from '../../utils/flarumFormatter';
 import {parse} from 'discord-markdown-parser';
 
 const MENTION_USER_REGEX = /<@!?(\d+)>/g;
@@ -8,7 +14,7 @@ const UNKNOWN_ROLE = 'Unknown Role';
 
 /**
  * Escapes characters that are special in markdown.
- * @param text The text to escape.
+ * @param text - The text to escape.
  * @returns The escaped text.
  */
 function escapeMarkdown(text: string): string {
@@ -18,6 +24,106 @@ function escapeMarkdown(text: string): string {
 export default defineEventHandler(async (event) => {
   const discussionId = getRouterParam(event, 'id');
 
+  if (!discussionId) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: 'Discussion ID is required',
+    });
+  }
+
+  // Handle legacy Flarum discussion
+  if (discussionId.startsWith('nex-')) {
+    const rawId = discussionId.slice(4);
+    const flarumId = parseInt(rawId, 10);
+    if (isNaN(flarumId)) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Discussion not found',
+      });
+    }
+
+    const legacyDiscussion = await FlarumDiscussion.findOne({
+      where: {
+        id: flarumId,
+        isPrivate: false,
+        isApproved: true,
+        hiddenAt: null,
+      },
+      include: [
+        {
+          model: FlarumUser,
+          as: 'user',
+        },
+        {
+          model: FlarumPost,
+          as: 'posts',
+          where: {
+            isPrivate: false,
+            isApproved: true,
+            hiddenAt: null,
+          },
+          required: false,
+          include: [
+            {
+              model: FlarumUser,
+              as: 'user',
+            },
+          ],
+        },
+      ],
+      order: [[{model: FlarumPost, as: 'posts'}, 'createdAt', 'ASC']],
+    });
+
+    if (!legacyDiscussion) {
+      throw createError({
+        statusCode: 404,
+        statusMessage: 'Discussion not found',
+      });
+    }
+
+    const u = legacyDiscussion.user;
+    const posts = (legacyDiscussion.posts || []).map((post) => {
+      const postUser = post.user;
+      const md = flarumToDiscordMarkdown(post.content);
+      return {
+        id: `nex-${post.id}`,
+        content: parse(md),
+        userId: postUser ? `nex-${postUser.id}` : 'unknown',
+        media: [],
+        createdAt: post.createdAt,
+        updatedAt: post.editedAt || post.createdAt,
+        discussionId,
+        user: {
+          id: postUser ? `nex-${postUser.id}` : 'unknown',
+          username: postUser ? postUser.username : 'Unknown User',
+          displayName: postUser ? postUser.username : 'Unknown User',
+          avatarHash: postUser?.avatarUrl || '',
+        },
+      };
+    });
+
+    return {
+      id: discussionId,
+      name: legacyDiscussion.title,
+      userId: u ? `nex-${u.id}` : 'unknown',
+      lastMessageId: legacyDiscussion.lastPostId ?
+        `nex-${legacyDiscussion.lastPostId}` :
+        '',
+      messageCount: legacyDiscussion.commentCount ?? 0,
+      memberCount: legacyDiscussion.participantCount ?? 0,
+      createdAt: legacyDiscussion.createdAt,
+      updatedAt: legacyDiscussion.lastPostedAt || legacyDiscussion.createdAt,
+      user: {
+        id: u ? `nex-${u.id}` : 'unknown',
+        username: u ? u.username : 'Unknown User',
+        displayName: u ? u.username : 'Unknown User',
+        avatarHash: u?.avatarUrl || '',
+      },
+      posts,
+    };
+  }
+
+  // Handle current Dunya / Discord discussion
   const discussion = await Discussion.findByPk(discussionId, {
     include: [
       User,
@@ -92,3 +198,4 @@ export default defineEventHandler(async (event) => {
 
   return result;
 });
+

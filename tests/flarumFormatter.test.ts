@@ -1,0 +1,110 @@
+import {describe, it, expect} from 'bun:test';
+import {
+  decodeHtmlEntities,
+  flarumToDiscordMarkdown,
+} from '../server/utils/flarumFormatter';
+import {parse} from 'discord-markdown-parser';
+
+describe('flarumFormatter', () => {
+  describe('decodeHtmlEntities', () => {
+    it('decodes common HTML entities', () => {
+      const input = '&amp; &lt; &gt; &quot; &#039; &#39; &nbsp;';
+      expect(decodeHtmlEntities(input)).toBe('& < > " \' \'  ');
+    });
+  });
+
+  describe('flarumToDiscordMarkdown', () => {
+    it('returns empty string for null or empty input', () => {
+      expect(flarumToDiscordMarkdown(null)).toBe('');
+      expect(flarumToDiscordMarkdown('')).toBe('');
+    });
+
+    it('extracts plain text / markdown from <t> tags', () => {
+      const input = '<t>**Bold** &amp; *italic*</t>';
+      expect(flarumToDiscordMarkdown(input)).toBe('**Bold** & *italic*');
+    });
+
+    it('converts mentions', () => {
+      const userMention =
+        '<r><USERMENTION id="1" username="alice">@"alice"#1</USERMENTION></r>';
+      expect(flarumToDiscordMarkdown(userMention)).toBe('@alice');
+
+      const postMention =
+        '<r><POSTMENTION id="10" number="5">@"bob"#p10</POSTMENTION></r>';
+      expect(flarumToDiscordMarkdown(postMention)).toBe('(Post #5)');
+    });
+
+    it('converts images and URLs', () => {
+      const img =
+        '<r><IMG src="https://example.com/pic.png"><s>![pic](</s>https://example.com/pic.png<e>)</e></IMG></r>';
+      expect(flarumToDiscordMarkdown(img)).toBe('https://example.com/pic.png');
+
+      const urlWithLabel =
+        '<r><URL url="https://example.com"><s>[url=https://example.com]</s>My Site<e>[/url]</e></URL></r>';
+      expect(flarumToDiscordMarkdown(urlWithLabel)).toBe(
+          'My Site (https://example.com)',
+      );
+
+      const urlPlain =
+        '<r><URL url="https://example.com">https://example.com</URL></r>';
+      expect(flarumToDiscordMarkdown(urlPlain)).toBe('https://example.com');
+    });
+
+    it('converts code blocks and inline code', () => {
+      const codeBlock =
+        '<r><CODE lang="typescript">' +
+        '<s>```typescript</s>const x = 1;<e>```</e></CODE></r>';
+      const expectedCode = '```typescript\nconst x = 1;\n```';
+      expect(flarumToDiscordMarkdown(codeBlock)).toBe(expectedCode);
+
+      const inlineCode =
+        '<r><C><s>`</s>const y = 2;<e>`</e></C></r>';
+      expect(flarumToDiscordMarkdown(inlineCode)).toBe('`const y = 2;`');
+    });
+
+    it('converts basic formatting and spoilers', () => {
+      const formatting =
+        '<r><p><B><s>[b]</s>Bold<e>[/b]</e></B></p>' +
+        '<p><I><s>[i]</s>Italic<e>[/i]</e></I></p>' +
+        '<p><U><s>[u]</s>Underline<e>[/u]</e></U></p>' +
+        '<p><DEL><s>[s]</s>Strikethrough<e>[/s]</e></DEL></p>' +
+        '<p><SPOILER><s>[spoiler]</s>Secret<e>[/spoiler]</e></SPOILER></p></r>';
+
+      const converted = flarumToDiscordMarkdown(formatting);
+      expect(converted).toContain('**Bold**');
+      expect(converted).toContain('*Italic*');
+      expect(converted).toContain('__Underline__');
+      expect(converted).toContain('~~Strikethrough~~');
+      expect(converted).toContain('||Secret||');
+    });
+
+    it('converts quotes with authors', () => {
+      const quote =
+        '<r><QUOTE author="alice">' +
+        '<s>[quote="alice"]</s>Quoted text<e>[/quote]</e></QUOTE></r>';
+      const converted = flarumToDiscordMarkdown(quote);
+      expect(converted).toContain('> **alice:**');
+      expect(converted).toContain('> Quoted text');
+    });
+
+    it('converts lists', () => {
+      const list =
+        '<r><LIST><LI><s>* </s>Item 1</LI><LI><s>* </s>Item 2</LI></LIST></r>';
+      const converted = flarumToDiscordMarkdown(list);
+      expect(converted).toContain('- Item 1');
+      expect(converted).toContain('- Item 2');
+    });
+
+    it('produces valid AST with discord-markdown-parser', () => {
+      const sample =
+        '<r><p><B><s>[b]</s>Important<e>[/b]</e></B></p>' +
+        '<p><USERMENTION id="2" username="bob">@"bob"#2</USERMENTION> see ' +
+        '<URL url="https://example.com">https://example.com</URL></p></r>';
+
+      const md = flarumToDiscordMarkdown(sample);
+      const ast = parse(md);
+      expect(Array.isArray(ast)).toBe(true);
+      expect(ast.some((node) => node.type === 'strong')).toBe(true);
+    });
+  });
+});
