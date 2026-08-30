@@ -1,17 +1,15 @@
 <template>
-    <div class="column">
-        <user-avatar :id="props.userId" :avatar-hash="avatarHash" />
-    </div>
-    <div class="column is-fluid">
-        <div style="line-height: 1.5">
-            <div class="ts-meta is-small is-secondary">
-                <div class="item" :title="props.createdAt">
-                    {{ props.displayName }} | {{ $dayjs(props.createdAt).fromNow() }}
-                </div>
-            </div>
-        </div>
-        <slot />
-    </div>
+  <div class="ts-wrap is-middle-aligned is-compact has-bottom-spaced-small">
+    <user-avatar :id="props.userId" :avatar-hash="avatarHash" />
+    <span class="ts-text is-bold is-small">{{ props.displayName }}</span>
+    <span class="ts-text is-secondary is-small">•</span>
+    <span class="ts-text is-secondary is-small" :title="props.createdAt">
+      {{ $dayjs(props.createdAt).fromNow() }}
+    </span>
+  </div>
+  <div style="line-height: 1.6; word-break: break-word;">
+    <slot />
+  </div>
 </template>
 
 <script setup>

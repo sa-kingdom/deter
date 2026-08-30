@@ -1,11 +1,15 @@
 <template>
-    <div class="ts-avatar is-large is-circular">
-        <img :src="avatarUrl" >
-    </div>
+  <div class="ts-avatar is-large is-circular">
+    <img :src="avatarUrl" alt="" @error="handleAvatarError">
+  </div>
 </template>
 
 <script setup>
 import DragonLightIcon from '../assets/DragonLightIcon.png';
+
+const handleAvatarError = (event) => {
+  event.target.src = DragonLightIcon;
+};
 
 const {apiPublicBaseUrl} = useRuntimeConfig().public;
 

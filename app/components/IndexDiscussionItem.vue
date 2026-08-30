@@ -1,27 +1,58 @@
 <template>
-  <a :href="`/${id}`" class="ts-segment has-top-spaced">
-    <div class="ts-grid">
-      <div class="column">
-        <div class="ts-avatar is-large is-circular">
-          <img :src="ownerProfileAvatar" >
-        </div>
+  <NuxtLink
+    :to="`/${id}`"
+    class="ts-segment is-interactive has-top-spaced"
+    style="display: block; text-decoration: none; color: inherit;"
+  >
+    <!-- modern Author Meta Line -->
+    <div class="ts-wrap is-middle-aligned is-compact has-bottom-spaced-small">
+      <div class="ts-avatar is-circular is-small">
+        <img
+          :src="ownerProfileAvatar"
+          alt=""
+          @error="handleAvatarError"
+        >
       </div>
-      <div class="column is-fluid">
-        <div style="line-height: 1.5">
-          <div class="ts-text is-heavy">{{ props.name }}</div>
-          <div class="ts-meta is-small is-secondary">
-            <div class="item" :title="props.createdAt">
-              {{ $dayjs(props.createdAt).fromNow() }} | {{ props.user.displayName }}
-            </div>
-          </div>
-        </div>
-      </div>
+      <span class="ts-text is-bold is-small">
+        {{ props.user.displayName }}
+      </span>
+      <span class="ts-text is-secondary is-small">•</span>
+      <span class="ts-text is-secondary is-small" :title="props.createdAt">
+        {{ $dayjs(props.createdAt).fromNow() }}
+      </span>
     </div>
-  </a>
+
+    <!-- Post Title -->
+    <div
+      class="ts-header is-heavy is-medium has-bottom-spaced-small"
+      style="line-height: 1.4;"
+    >
+      {{ props.name }}
+    </div>
+
+    <!-- modern Actions / Stats Bar -->
+    <div class="ts-wrap is-compact has-top-spaced-small">
+      <span class="ts-badge is-secondary is-small">
+        <span class="ts-icon is-comments-icon" />
+        {{ props.messageCount }} 則留言
+      </span>
+      <span
+        v-if="props.memberCount"
+        class="ts-badge is-secondary is-small"
+      >
+        <span class="ts-icon is-users-icon" />
+        {{ props.memberCount }} 人參與
+      </span>
+    </div>
+  </NuxtLink>
 </template>
 
 <script setup>
 import DragonLightIcon from '../assets/DragonLightIcon.png';
+
+const handleAvatarError = (event) => {
+  event.target.src = DragonLightIcon;
+};
 
 const {apiPublicBaseUrl} = useRuntimeConfig().public;
 
