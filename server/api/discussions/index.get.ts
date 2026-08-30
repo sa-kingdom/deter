@@ -1,3 +1,4 @@
+import {Op} from 'sequelize';
 import {Discussion, User} from '../../utils/db';
 import {
   FlarumDiscussion,
@@ -9,40 +10,58 @@ import {
   COLLECTIONS_BY_SLUG,
 } from '../../constants/collections';
 
+const PAGE_SIZE = 20;
+
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
+
   const collectionSlug = query.collection ?
     String(query.collection) :
     null;
+
+  // Cursor: ISO timestamp of the oldest item from the previous page.
+  // Fetch items with updatedAt strictly before this cursor.
+  const beforeCursor = query.before ?
+    new Date(String(query.before)) :
+    null;
+
+  const limit = query.limit ?
+    Math.min(Number(query.limit), 100) :
+    PAGE_SIZE;
 
   const filterCollection = collectionSlug ?
     (COLLECTIONS_BY_SLUG[collectionSlug] ?? null) :
     null;
 
+  // ── Current (Discord-sourced) discussions ────────────────────────
+  const currentWhere: Record<string, unknown> = {};
+  if (beforeCursor) {
+    currentWhere.updatedAt = {[Op.lt]: beforeCursor};
+  }
+
   const currentDiscussionsPromise = collectionSlug ?
     Promise.resolve([]) :
     Discussion.findAll({
-      order: [
-        ['updatedAt', 'DESC'],
-        ['createdAt', 'DESC'],
-      ],
+      where: currentWhere,
+      order: [['updatedAt', 'DESC']],
+      limit,
       include: User,
     }).then((rows) =>
       rows.map((r) => {
         const data = r.toJSON();
-        return {
-          ...data,
-          collections: [],
-          tags: [],
-        };
+        return {...data, collections: [], tags: []};
       }),
     );
 
+  // ── Legacy (Flarum) discussions ──────────────────────────────────
   const legacyWhere: Record<string, unknown> = {
     isPrivate: false,
     isApproved: true,
     hiddenAt: null,
   };
+  if (beforeCursor) {
+    legacyWhere.lastPostedAt = {[Op.lt]: beforeCursor};
+  }
 
   const tagInclude: Record<string, unknown> = {
     model: FlarumTag,
@@ -55,10 +74,8 @@ export default defineEventHandler(async (event) => {
 
   const legacyDiscussionsPromise = FlarumDiscussion.findAll({
     where: legacyWhere,
-    order: [
-      ['lastPostedAt', 'DESC'],
-      ['createdAt', 'DESC'],
-    ],
+    order: [['lastPostedAt', 'DESC']],
+    limit,
     include: [
       {model: FlarumUser, as: 'user'},
       tagInclude,
@@ -106,13 +123,24 @@ export default defineEventHandler(async (event) => {
     legacyDiscussionsPromise,
   ]);
 
-  const allDiscussions = [...currentDiscussions, ...legacyDiscussions];
-
-  allDiscussions.sort((a, b) => {
-    const timeA = new Date(a.updatedAt || a.createdAt).getTime();
-    const timeB = new Date(b.updatedAt || b.createdAt).getTime();
-    return timeB - timeA;
+  // Merge and sort descending, then take a single page
+  const merged = [...currentDiscussions, ...legacyDiscussions];
+  merged.sort((a, b) => {
+    const tA = new Date(a.updatedAt || a.createdAt).getTime();
+    const tB = new Date(b.updatedAt || b.createdAt).getTime();
+    return tB - tA;
   });
 
-  return allDiscussions;
+  const items = merged.slice(0, limit);
+
+  // Next cursor = updatedAt of the last item in this page
+  const last = items[items.length - 1];
+  const nextCursor = last ?
+    (new Date(last.updatedAt || last.createdAt).toISOString()) :
+    null;
+
+  // Signal end-of-feed when this page is shorter than requested limit
+  const hasMore = items.length >= limit;
+
+  return {items, nextCursor: hasMore ? nextCursor : null};
 });
