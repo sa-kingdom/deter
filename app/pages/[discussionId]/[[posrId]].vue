@@ -77,6 +77,13 @@ const ownerProfileAvatar = computed(() => {
   if (!avatarHash) {
     return DragonLightIcon;
   }
+  if (
+    avatarHash.startsWith('http://') ||
+    avatarHash.startsWith('https://') ||
+    avatarHash.startsWith('/')
+  ) {
+    return avatarHash;
+  }
   return `${apiPublicBaseUrl}/assets/avatar-${id}-${avatarHash}`;
 });
 </script>

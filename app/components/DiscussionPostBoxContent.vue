@@ -3,6 +3,22 @@
         <span v-if="j.type === 'text'" class="ts-text plain">
             {{ j.content }}
         </span>
+        <strong v-if="j.type === 'strong'">
+            <discussion-post-box-content :id="props.id" :content="j.content" />
+        </strong>
+        <em v-if="j.type === 'em'">
+            <discussion-post-box-content :id="props.id" :content="j.content" />
+        </em>
+        <u v-if="j.type === 'underline'">
+            <discussion-post-box-content :id="props.id" :content="j.content" />
+        </u>
+        <code v-if="j.type === 'inlineCode'" class="ts-text is-code">
+            {{ j.content }}
+        </code>
+        <pre v-if="j.type === 'codeBlock'" class="ts-box is-code-block"><code>{{ j.content }}</code></pre>
+        <blockquote v-if="j.type === 'blockQuote'" class="ts-quote">
+            <discussion-post-box-content :id="props.id" :content="j.content" />
+        </blockquote>
         <span v-if="j.type === 'strikethrough'" class="ts-text is-deleted strikethrough">
             <discussion-post-box-content :id="props.id" :content="j.content" />
         </span>
@@ -52,12 +68,13 @@ function toEmojiUrl(emojiId) {
 }
 
 /**
- * Check if the url is a attachment URL.
+ * Check if the url is a attachment URL or direct image URL.
  * @param url - The URL to check.
  * @returns - True if the url is a attachment URL. False otherwise.
  */
 function isAttachmentUrl(url) {
-  return url.startsWith(`${baseUrlMedia}/attachments/`);
+  return url.startsWith(`${baseUrlMedia}/attachments/`) ||
+    /\.(?:png|jpe?g|gif|webp|svg)(\?.*)?$/i.test(url);
 }
 
 const props = defineProps({
