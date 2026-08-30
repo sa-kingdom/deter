@@ -1,6 +1,14 @@
 <template>
   <div class="discussion-feed">
-    <ClientOnly>
+    <!-- Skeleton: shown only on initial load (items empty + loading) -->
+    <template v-if="loading && items.length === 0">
+      <index-discussion-item-skeleton
+        v-for="n in 8"
+        :key="n"
+      />
+    </template>
+
+    <ClientOnly v-else>
       <VList
         ref="listRef"
         class="discussion-vlist"
@@ -15,17 +23,16 @@
         </template>
       </VList>
       <template #fallback>
-        <index-discussion-item
-          v-for="(item, i) in items"
-          :key="i"
-          v-bind="item"
+        <index-discussion-item-skeleton
+          v-for="n in 8"
+          :key="n"
         />
       </template>
     </ClientOnly>
 
-    <!-- Loading indicator -->
+    <!-- Loading indicator for subsequent pages -->
     <div
-      v-if="loading"
+      v-if="loading && items.length > 0"
       class="ts-content has-center-aligned"
       style="padding: 2rem 0;"
     >
@@ -48,6 +55,8 @@
 import {ref, shallowRef, watch} from 'vue';
 import {VList} from 'virtua/vue';
 import IndexDiscussionItem from '../components/IndexDiscussionItem.vue';
+import IndexDiscussionItemSkeleton
+  from '../components/IndexDiscussionItemSkeleton.vue';
 
 const {apiInvokeBaseUrl} = useRuntimeConfig().public;
 const route = useRoute();
