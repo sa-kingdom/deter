@@ -48,5 +48,13 @@ export default defineNuxtConfig({
       port: '3306',
       logging: false,
     },
+    legacyDatabase: {
+      name: 'flarum',
+      user: 'deter',
+      pass: 'deter',
+      host: '127.0.0.1',
+      port: '3306',
+      logging: false,
+    },
   },
 });
