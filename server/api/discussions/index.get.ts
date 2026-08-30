@@ -1,5 +1,10 @@
 import {Discussion, User} from '../../utils/db';
-import {FlarumDiscussion, FlarumUser} from '../../utils/flarumDb';
+import {
+  FlarumDiscussion,
+  FlarumUser,
+  FlarumTag,
+} from '../../utils/flarumDb';
+import {COLLECTIONS_MAP} from '../../constants/collections';
 
 export default defineEventHandler(async () => {
   const currentDiscussionsPromise = Discussion.findAll({
@@ -8,7 +13,16 @@ export default defineEventHandler(async () => {
       ['createdAt', 'DESC'],
     ],
     include: User,
-  }).then((rows) => rows.map((r) => r.toJSON()));
+  }).then((rows) =>
+    rows.map((r) => {
+      const data = r.toJSON();
+      return {
+        ...data,
+        collections: [],
+        tags: [],
+      };
+    }),
+  );
 
   const legacyDiscussionsPromise = FlarumDiscussion.findAll({
     where: {
@@ -25,10 +39,23 @@ export default defineEventHandler(async () => {
         model: FlarumUser,
         as: 'user',
       },
+      {
+        model: FlarumTag,
+        as: 'tags',
+      },
     ],
   }).then((rows) =>
     rows.map((d) => {
       const u = d.user;
+      const collections = (d.tags || []).map((t) =>
+        COLLECTIONS_MAP[t.id] || {
+          id: t.id,
+          name: t.name,
+          slug: t.slug,
+          color: t.color,
+          icon: t.icon,
+        },
+      );
       return {
         id: `N${d.id}`,
         name: d.title,
@@ -38,6 +65,8 @@ export default defineEventHandler(async () => {
         memberCount: d.participantCount ?? 0,
         createdAt: d.createdAt,
         updatedAt: d.lastPostedAt || d.createdAt,
+        collections,
+        tags: collections,
         user: {
           id: u ? `N${u.id}` : 'unknown',
           username: u ? u.username : 'Unknown User',

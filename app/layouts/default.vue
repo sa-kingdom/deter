@@ -1,10 +1,15 @@
 <template>
   <div class="ts-app-layout is-full is-vertical">
-    <!-- modern Top Navbar -->
+    <!-- Top Navbar -->
     <div
       class="cell is-secondary"
-      style="border-bottom: 1px solid var(--ts-gray-300);"
+      style="border-bottom: 1px solid var(--ts-gray-300); position: relative;"
     >
+      <!-- Navbar Breathing Light on Page Navigation -->
+      <div
+        class="navbar-breathing-bar"
+        :class="{'is-active': isPageNavigating}"
+      />
       <div class="ts-container">
         <div class="ts-content is-dense">
           <div
@@ -290,9 +295,125 @@ import {ref} from 'vue';
 import DragonLightIcon from '../assets/DragonLightIcon.png';
 
 const isDrawerOpen = ref(false);
+const isPageNavigating = ref(false);
+
+const router = useRouter();
+router.beforeEach((to, from) => {
+  if (to.path !== from.path) {
+    isPageNavigating.value = true;
+  }
+});
+router.afterEach(() => {
+  isPageNavigating.value = false;
+});
+
+const nuxtApp = useNuxtApp();
+nuxtApp.hook('page:start', () => {
+  isPageNavigating.value = true;
+});
+nuxtApp.hook('page:finish', () => {
+  isPageNavigating.value = false;
+});
 
 const {
   githubRepositoryUrl,
   discordServerUrl,
 } = useRuntimeConfig().public;
 </script>
+
+<style>
+/* Breathing light for top navbar during page navigation */
+.navbar-breathing-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, #5865f2, #00b4d8, #5865f2);
+  background-size: 200% 100%;
+  opacity: 0;
+  pointer-events: none;
+  transition: opacity 0.2s ease;
+  z-index: 1000;
+}
+
+.navbar-breathing-bar.is-active {
+  opacity: 1;
+  animation:
+    navbar-pulse 1.2s ease-in-out infinite,
+    navbar-shift 1.8s linear infinite;
+}
+
+@keyframes navbar-pulse {
+  0%, 100% {
+    opacity: 0.5;
+    filter: drop-shadow(0 0 4px #5865f2);
+  }
+  50% {
+    opacity: 1;
+    filter: drop-shadow(0 0 10px #00b4d8);
+  }
+}
+
+@keyframes navbar-shift {
+  0% {
+    background-position: 0% 50%;
+  }
+  100% {
+    background-position: 200% 50%;
+  }
+}
+
+/* Button hover & active feedback */
+.ts-button {
+  transition:
+    background-color 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease,
+    box-shadow 0.15s ease,
+    filter 0.15s ease !important;
+  cursor: pointer;
+}
+
+.ts-button:hover {
+  filter: brightness(1.12) !important;
+}
+
+.ts-button:active {
+  transform: scale(0.96) !important;
+  filter: brightness(0.92) !important;
+}
+
+/* Menu items hover and active */
+.ts-menu .item {
+  transition:
+    background-color 0.15s ease,
+    transform 0.1s ease,
+    color 0.15s ease !important;
+}
+
+.ts-menu .item:hover {
+  background-color: var(--ts-gray-200) !important;
+}
+
+.ts-menu .item:active {
+  transform: scale(0.98) !important;
+  background-color: var(--ts-gray-300) !important;
+}
+
+/* Interactive discussion cards hover & active */
+.ts-segment.is-interactive {
+  transition:
+    transform 0.15s ease,
+    border-color 0.15s ease,
+    box-shadow 0.15s ease !important;
+}
+
+.ts-segment.is-interactive:hover {
+  border-color: var(--ts-gray-400) !important;
+}
+
+.ts-segment.is-interactive:active {
+  transform: scale(0.995) !important;
+}
+</style>

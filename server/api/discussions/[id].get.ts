@@ -3,9 +3,11 @@ import {
   FlarumDiscussion,
   FlarumUser,
   FlarumPost,
+  FlarumTag,
 } from '../../utils/flarumDb';
 import {flarumToDiscordMarkdown} from '../../utils/flarumFormatter';
 import {parse} from 'discord-markdown-parser';
+import {COLLECTIONS_MAP} from '../../constants/collections';
 
 const MENTION_USER_REGEX = /<@!?(\d+)>/g;
 const MENTION_ROLE_REGEX = /<@&(\d+)>/g;
@@ -55,6 +57,10 @@ export default defineEventHandler(async (event) => {
           as: 'user',
         },
         {
+          model: FlarumTag,
+          as: 'tags',
+        },
+        {
           model: FlarumPost,
           as: 'posts',
           where: {
@@ -82,6 +88,15 @@ export default defineEventHandler(async (event) => {
     }
 
     const u = legacyDiscussion.user;
+    const collections = (legacyDiscussion.tags || []).map((t) =>
+      COLLECTIONS_MAP[t.id] || {
+        id: t.id,
+        name: t.name,
+        slug: t.slug,
+        color: t.color,
+        icon: t.icon,
+      },
+    );
     const posts = (legacyDiscussion.posts || []).map((post) => {
       const postUser = post.user;
       const md = flarumToDiscordMarkdown(post.content);
@@ -119,6 +134,8 @@ export default defineEventHandler(async (event) => {
         displayName: u ? u.username : 'Unknown User',
         avatarHash: u?.avatarUrl || '',
       },
+      collections,
+      tags: collections,
       posts,
     };
   }
@@ -145,6 +162,8 @@ export default defineEventHandler(async (event) => {
 
   // Parse markdown in posts
   const result = discussion.toJSON();
+  result.collections = [];
+  result.tags = [];
   if (result.posts) {
     // Collect all unique mention IDs across all posts for batch retrieval
     const memberIds = new Set<string>();

@@ -26,6 +26,13 @@
         <span class="ts-text is-secondary is-small" :title="data.createdAt">
           {{ $dayjs(data.createdAt).fromNow() }}
         </span>
+        <span
+          v-for="collection in (data.collections || data.tags || [])"
+          :key="collection.id"
+          class="ts-badge is-small is-outlined is-secondary"
+        >
+          {{ collection.name }}
+        </span>
       </div>
 
       <!-- Title -->
