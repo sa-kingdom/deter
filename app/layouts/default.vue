@@ -236,6 +236,7 @@
 
           <!-- Center Discussion Stream -->
           <div class="column is-9-wide is-fluid">
+            <dunya-chat-widget />
             <slot />
           </div>
 
