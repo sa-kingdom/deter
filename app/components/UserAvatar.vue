@@ -5,7 +5,7 @@
 </template>
 
 <script setup>
-import DragonLightIcon from '../assets/DragonLightIcon.png';
+import DragonLightIcon from '../assets/DragonLightIcon.webp';
 
 const handleAvatarError = (event) => {
   event.target.src = DragonLightIcon;
