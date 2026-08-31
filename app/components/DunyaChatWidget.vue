@@ -18,12 +18,14 @@
           </div>
           <div class="faux-placeholder">
             <span class="ts-icon is-wand-magic-sparkles-icon text-accent" />
-            <span>問問 Dunya... 搜尋話題、詢問社群問題或隨興聊聊</span>
+            <span class="is-not-minimal">問問 Dunya... 搜尋話題、詢問社群問題或隨興聊聊</span>
+            <span class="is-minimal-only">問問 Dunya...</span>
           </div>
         </div>
         <div class="ts-badge is-primary is-small is-outlined is-start-icon faux-badge">
           <span class="ts-icon is-comments-icon" />
-          <span>開啟對話</span>
+          <span class="is-not-minimal">開啟對話</span>
+          <span class="is-minimal-only">開啟</span>
         </div>
       </div>
     </div>
@@ -51,24 +53,25 @@
 
         <!-- Header Actions -->
         <div class="header-actions">
-          <button
-            v-if="messages.length > 0"
-            type="button"
-            class="ts-button is-ghost is-secondary is-dense is-small is-start-icon action-btn"
-            title="清除對話紀錄"
-            @click="clearMessages"
-          >
-            <span class="ts-icon is-trash-can-icon" />
-            <span>清除</span>
-          </button>
+          <!-- Collapse: Desktop -->
           <button
             type="button"
-            class="ts-button is-ghost is-secondary is-dense is-small is-start-icon action-btn"
+            class="ts-button is-ghost is-secondary is-dense is-small is-start-icon is-not-minimal"
             title="收起對話框 (Esc)"
             @click="collapseChat"
           >
             <span class="ts-icon is-chevron-up-icon" />
             <span>收起</span>
+          </button>
+          <!-- Collapse: Mobile Icon-Only -->
+          <button
+            type="button"
+            class="ts-button is-ghost is-secondary is-dense is-small is-icon is-minimal-only"
+            title="收起對話框 (Esc)"
+            aria-label="收起對話框"
+            @click="collapseChat"
+          >
+            <span class="ts-icon is-chevron-up-icon" />
           </button>
         </div>
       </div>
@@ -156,7 +159,7 @@
               v-model="inputText"
               class="integrated-textarea"
               rows="2"
-              placeholder="輸入問題或訊息... (Enter 發送，Shift + Enter 換行)"
+              placeholder="輸入問題或訊息..."
               :disabled="isLoading"
               @keydown.enter.exact.prevent="handleSendMessage"
               @keydown.esc="collapseChat"
@@ -215,13 +218,6 @@ async function expandChat() {
  */
 function collapseChat() {
   isExpanded.value = false;
-}
-
-/**
- * Clear current chat message history.
- */
-function clearMessages() {
-  messages.value = [];
 }
 
 /**
@@ -456,12 +452,6 @@ async function simulateDunyaReply(query) {
   flex-shrink: 0;
 }
 
-.action-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.3rem;
-}
-
 /* ── Messages Stream ── */
 .chat-messages-body {
   max-height: 380px;
@@ -683,8 +673,90 @@ async function simulateDunyaReply(query) {
 }
 
 @media (max-width: 768px) {
+  .dunya-chat-wrapper {
+    margin-bottom: 1rem;
+  }
+
+  .dunya-faux-input {
+    padding: 0.5rem 0.85rem !important;
+  }
+
+  .faux-placeholder {
+    margin: 0 0.4rem;
+    font-size: 0.88rem;
+  }
+
+  .faux-left {
+    gap: 0.45rem;
+  }
+
+  .chat-header-bar {
+    padding: 0.65rem 0.85rem;
+  }
+
+  .header-actions {
+    gap: 0.35rem;
+  }
+
+  .header-sub-title {
+    max-width: 160px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .chat-messages-body {
+    max-height: 52vh;
+    min-height: 180px;
+    padding: 0.75rem !important;
+    gap: 0.65rem;
+  }
+
+  .message-bubble {
+    max-width: 88%;
+    padding: 0.55rem 0.8rem;
+    font-size: 0.88rem;
+  }
+
+  .welcome-card {
+    padding: 0.75rem 0.85rem !important;
+    margin-bottom: 0.65rem !important;
+  }
+
+  .welcome-desc {
+    font-size: 0.82rem;
+    margin-bottom: 0.65rem;
+  }
+
+  .quick-prompt-chip {
+    padding: 0.28rem 0.65rem;
+    font-size: 0.78rem;
+  }
+
+  .chat-footer-bar {
+    padding: 0.6rem 0.75rem 0.75rem !important;
+  }
+
+  .integrated-input-box {
+    padding: 0.45rem 0.65rem;
+  }
+
+  .integrated-textarea {
+    min-height: 2.2rem;
+    font-size: 0.88rem;
+  }
+
+  .integrated-actions-bar {
+    margin-top: 0.25rem;
+    padding-top: 0.2rem;
+  }
+
   .input-hint-text {
     display: none;
+  }
+
+  .send-btn {
+    margin-left: auto;
   }
 }
 </style>
