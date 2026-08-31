@@ -14,7 +14,7 @@
       <div class="faux-inner">
         <div class="faux-left">
           <div class="ts-avatar is-circular is-small faux-avatar">
-            <img :src="DragonLightIcon" alt="Dunya">
+            <img :src="DunyaAvatar" alt="Dunya">
           </div>
           <div class="faux-placeholder">
             <span class="ts-icon is-wand-magic-sparkles-icon text-accent" />
@@ -39,7 +39,7 @@
       <div class="chat-header-bar">
         <div class="header-left">
           <div class="ts-avatar is-circular is-small header-avatar">
-            <img :src="DragonLightIcon" alt="Dunya">
+            <img :src="DunyaAvatar" alt="Dunya">
           </div>
           <div class="header-titles">
             <div class="header-main-title ts-text is-bold is-small">
@@ -120,7 +120,7 @@
             v-if="msg.role === 'assistant'"
             class="ts-avatar is-circular is-small message-avatar"
           >
-            <img :src="DragonLightIcon" alt="Dunya">
+            <img :src="DunyaAvatar" alt="Dunya">
           </div>
 
           <!-- Message Bubble -->
@@ -140,7 +140,7 @@
           class="message-row is-assistant"
         >
           <div class="ts-avatar is-circular is-small message-avatar">
-            <img :src="DragonLightIcon" alt="Dunya">
+            <img :src="DunyaAvatar" alt="Dunya">
           </div>
           <div class="message-bubble typing-bubble">
             <span class="typing-dot" />
@@ -187,7 +187,7 @@
 
 <script setup>
 import {ref, computed, nextTick} from 'vue';
-import DragonLightIcon from '~/assets/DragonLightIcon.png';
+import DunyaAvatar from '~/assets/DunyaAvatar.webp';
 
 const runtimeConfig = useRuntimeConfig();
 const dunyaApiBaseUrl = computed(() => {
