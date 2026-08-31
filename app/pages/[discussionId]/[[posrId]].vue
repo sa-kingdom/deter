@@ -84,7 +84,7 @@
 </template>
 
 <script setup>
-import DragonLightIcon from '~/assets/DragonLightIcon.png';
+import DragonLightIcon from '~/assets/DragonLightIcon.webp';
 import DiscussionPost from '~/components/DiscussionPost.vue';
 import DiscussionPostBoxContent from '~/components/DiscussionPostBoxContent.vue';
 import DiscussionPostBoxMedia from '~/components/DiscussionPostBoxMedia.vue';
