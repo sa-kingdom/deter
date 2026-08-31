@@ -39,6 +39,7 @@ export default defineNuxtConfig({
       discordServerUrl: 'https://discord.gg/Hr4XQt7Eay',
       apiPublicBaseUrl: 'http://localhost:3000',
       apiInvokeBaseUrl: '/api',
+      dunyaApiBaseUrl: 'http://localhost:3001',
     },
     database: {
       name: 'deter',
