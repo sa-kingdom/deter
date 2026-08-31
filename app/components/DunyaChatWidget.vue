@@ -186,13 +186,20 @@
 </template>
 
 <script setup>
-import {ref, nextTick} from 'vue';
+import {ref, computed, nextTick} from 'vue';
 import DragonLightIcon from '~/assets/DragonLightIcon.png';
+
+const runtimeConfig = useRuntimeConfig();
+const dunyaApiBaseUrl = computed(() => {
+  return runtimeConfig.public.dunyaApiBaseUrl || 'http://localhost:3001';
+});
 
 const isExpanded = ref(false);
 const inputText = ref('');
 const isLoading = ref(false);
 const messages = ref([]);
+const sessionId = ref(null);
+const sessionToken = ref(null);
 const messagesContainerRef = ref(null);
 const inputRef = ref(null);
 
@@ -251,7 +258,38 @@ function handleQuickPrompt(promptText) {
 }
 
 /**
- * Send current message and query Dunya conversational API.
+ * Request a fresh session and Bearer token from Dunya.
+ * @returns Object with sessionId and token.
+ */
+async function fetchDunyaSession() {
+  return await $fetch(`${dunyaApiBaseUrl.value}/chat/session`, {
+    method: 'GET',
+  });
+}
+
+/**
+ * Post a message to Dunya conversational endpoint.
+ * @param token - Bearer JWT token.
+ * @param currentSessionId - Active session ID.
+ * @param messageText - Text content to send.
+ * @returns Dunya message response object.
+ */
+async function postDunyaMessage(token, currentSessionId, messageText) {
+  return await $fetch(`${dunyaApiBaseUrl.value}/chat/message`, {
+    method: 'POST',
+    headers: {
+      Authorization: `Bearer ${token}`,
+    },
+    body: {
+      content: messageText,
+      sessionId: currentSessionId,
+      locale: 'zh-TW',
+    },
+  });
+}
+
+/**
+ * Send current message directly to Dunya conversational API.
  */
 async function handleSendMessage() {
   const text = inputText.value.trim();
@@ -271,15 +309,43 @@ async function handleSendMessage() {
   scrollToBottom();
 
   try {
-    // Integration Hook for Dunya API:
-    // When Dunya's conversational endpoint is ready, replace simulated reply with:
-    // const res = await $fetch('/api/dunya/chat', { method: 'POST', body: { message: text } });
-    const replyContent = await simulateDunyaReply(text);
+    if (!sessionToken.value) {
+      const session = await fetchDunyaSession();
+      sessionId.value = session.sessionId;
+      sessionToken.value = session.token;
+    }
+
+    let reply;
+    try {
+      reply = await postDunyaMessage(sessionToken.value, sessionId.value, text);
+    } catch (fetchErr) {
+      const status =
+        fetchErr?.status ||
+        fetchErr?.statusCode ||
+        fetchErr?.response?.status;
+      // Auto-renew token if expired (401) and retry once
+      if (status === 401) {
+        const freshSession = await fetchDunyaSession();
+        sessionId.value = sessionId.value || freshSession.sessionId;
+        sessionToken.value = freshSession.token;
+        reply = await postDunyaMessage(
+            sessionToken.value,
+            sessionId.value,
+            text,
+        );
+      } else {
+        throw fetchErr;
+      }
+    }
+
+    if (reply?.sessionId) {
+      sessionId.value = reply.sessionId;
+    }
 
     messages.value.push({
       id: `dunya-${Date.now()}`,
       role: 'assistant',
-      content: replyContent,
+      content: reply.content,
       timestamp: Date.now(),
     });
   } catch (err) {
@@ -295,33 +361,6 @@ async function handleSendMessage() {
     await nextTick();
     scrollToBottom();
   }
-}
-
-/**
- * Simulated Dunya assistant reply generator.
- * Provides helpful answers about Deter and Dunya before the backend API is connected.
- * @param query - The user prompt text.
- * @returns Simulated response text.
- */
-async function simulateDunyaReply(query) {
-  // Simulate natural AI thinking delay (600ms ~ 1200ms)
-  await new Promise((resolve) => setTimeout(resolve, 800));
-
-  const q = query.toLowerCase();
-  if (q.includes('熱門') || q.includes('話題') || q.includes('推薦')) {
-    return 'Deter 論壇目前有許多熱門討論，您可以從左側看板的「綜合」、「廢文」或「創作」發掘話題，也可以直接點選「全部話題」瀏覽最新討論串。';
-  }
-  if (q.includes('看板') || q.includes('特色') || q.includes('分類')) {
-    return 'Deter 擁有豐富的看板分類，包括「網站建議/回報」、「站方」、「集中串」、「綜合」、「廢文」、「心情」、「創作」、「遊戲」以及「輔導級內容」，點擊左側看板即可隨時篩選。';
-  }
-  if (q.includes('discord') || q.includes('發布') || q.includes('發文') || q.includes('同步')) {
-    return 'Deter 與 Discord 論壇頻道同步運作，您可以點擊右側欄的「進入 Discord 發佈文章」加入社群，在論壇頻道發布的貼文、留言、貼圖與附件都會由 Dunya 自動同步到此處展示。';
-  }
-  if (q.includes('dunya') || q.includes('你') || q.includes('機器人')) {
-    return '我是 Dunya，負責將 Discord 論壇頻道的貼文、留言、貼圖與檔案即時同步並快取至 Deter，未來也將在此提供對話與話題導覽功能。';
-  }
-
-  return `已收到您的訊息：「${query}」，此對話介面已就緒，未來將直接串接 Dunya 提供對話服務。`;
 }
 </script>
 
