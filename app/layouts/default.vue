@@ -295,7 +295,7 @@
 
 <script setup>
 import {ref, computed} from 'vue';
-import DragonLightIcon from '../assets/DragonLightIcon.png';
+import DragonLightIcon from '../assets/DragonLightIcon.webp';
 
 const isDrawerOpen = ref(false);
 const isPageNavigating = ref(false);
