@@ -406,14 +406,20 @@ const {
   filter: brightness(0.94) !important;
 }
 
-/* Subtle hover & active feedback on dark background to prevent excessive glare */
+/* Subtle hover & active feedback on dark background to prevent excessive glare or darkening */
 @media (prefers-color-scheme: dark) {
   html:not(.is-light) .ts-button:hover {
-    filter: brightness(1.04) !important;
+    filter: brightness(1.06) !important;
   }
 
-  html:not(.is-light) .ts-button:active {
-    filter: brightness(0.94) !important;
+  html:not(.is-light) .ts-button:active,
+  html:not(.is-light) .ts-button.is-active {
+    filter: brightness(1.06) !important;
+  }
+
+  html:not(.is-light) .ts-button:active:hover,
+  html:not(.is-light) .ts-button.is-active:hover {
+    filter: brightness(1.1) !important;
   }
 }
 
@@ -422,15 +428,33 @@ html[data-scheme="dark"] .ts-button:hover,
 .has-dark .ts-button:hover,
 .is-dark .ts-button:hover,
 .ts-button.is-dark:hover {
-  filter: brightness(1.04) !important;
+  filter: brightness(1.06) !important;
 }
 
 html.is-dark .ts-button:active,
 html[data-scheme="dark"] .ts-button:active,
 .has-dark .ts-button:active,
 .is-dark .ts-button:active,
-.ts-button.is-dark:active {
-  filter: brightness(0.94) !important;
+.ts-button.is-dark:active,
+html.is-dark .ts-button.is-active,
+html[data-scheme="dark"] .ts-button.is-active,
+.has-dark .ts-button.is-active,
+.is-dark .ts-button.is-active,
+.ts-button.is-dark.is-active {
+  filter: brightness(1.06) !important;
+}
+
+html.is-dark .ts-button:active:hover,
+html[data-scheme="dark"] .ts-button:active:hover,
+.has-dark .ts-button:active:hover,
+.is-dark .ts-button:active:hover,
+.ts-button.is-dark:active:hover,
+html.is-dark .ts-button.is-active:hover,
+html[data-scheme="dark"] .ts-button.is-active:hover,
+.has-dark .ts-button.is-active:hover,
+.is-dark .ts-button.is-active:hover,
+.ts-button.is-dark.is-active:hover {
+  filter: brightness(1.1) !important;
 }
 
 /* Menu items hover and active */
@@ -438,16 +462,53 @@ html[data-scheme="dark"] .ts-button:active,
   transition:
     background-color 0.15s ease,
     transform 0.1s ease,
-    color 0.15s ease !important;
+    color 0.15s ease,
+    filter 0.15s ease !important;
 }
 
-.ts-menu .item:hover {
+/* Only apply gray hover background to inactive items */
+.ts-menu .item:not(.is-active):hover {
   background-color: var(--ts-gray-200) !important;
 }
 
-.ts-menu .item:active {
+.ts-menu .item:not(.is-active):active {
   transform: scale(0.98) !important;
   background-color: var(--ts-gray-300) !important;
+}
+
+/* Maintain active item contrast and prevent it from turning black when hovered */
+.ts-menu .item.is-active:hover {
+  filter: brightness(1.06) !important;
+}
+
+@media (prefers-color-scheme: dark) {
+  html:not(.is-light) .ts-menu .item.is-active {
+    background-color: var(--ts-gray-800) !important;
+    color: var(--ts-gray-50) !important;
+  }
+
+  html:not(.is-light) .ts-menu .item.is-active:hover {
+    background-color: var(--ts-gray-800) !important;
+    color: var(--ts-gray-50) !important;
+    filter: brightness(1.06) !important;
+  }
+}
+
+html.is-dark .ts-menu .item.is-active,
+html[data-scheme="dark"] .ts-menu .item.is-active,
+.has-dark .ts-menu .item.is-active,
+.is-dark .ts-menu .item.is-active {
+  background-color: var(--ts-gray-800) !important;
+  color: var(--ts-gray-50) !important;
+}
+
+html.is-dark .ts-menu .item.is-active:hover,
+html[data-scheme="dark"] .ts-menu .item.is-active:hover,
+.has-dark .ts-menu .item.is-active:hover,
+.is-dark .ts-menu .item.is-active:hover {
+  background-color: var(--ts-gray-800) !important;
+  color: var(--ts-gray-50) !important;
+  filter: brightness(1.06) !important;
 }
 
 /* Interactive discussion cards hover & active */
