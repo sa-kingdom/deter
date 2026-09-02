@@ -35,6 +35,18 @@ export function flarumToDiscordMarkdown(
     return '';
   }
 
+  const trimmedRaw = raw.trim();
+
+  // Hide system event posts serialized as JSON (e.g. {"sticky":false}, etc.)
+  if (
+    trimmedRaw.startsWith('{"sticky":') ||
+    trimmedRaw.startsWith('{"title":') ||
+    trimmedRaw.startsWith('{"tagIds":') ||
+    trimmedRaw.startsWith('{"locked":')
+  ) {
+    return '';
+  }
+
   let text = raw;
 
   // If wrapped in <t>...</t>, strip the container tag.
@@ -62,10 +74,38 @@ export function flarumToDiscordMarkdown(
       '📌 @$1 的留言',
   );
 
-  // 2. Images
+  // 2. FancyPants character formatting (e.g. <FP char="…"><s>...</s></FP> -> …)
+  text = text.replace(
+      /<FP\b[^>]*char="([^"]+)"[^>]*>[\s\S]*?<\/FP>/gi,
+      '$1',
+  );
+  text = text.replace(/<FP\b[^>]*>([\s\S]*?)<\/FP>/gi, '$1');
+
+  // 3. Images and URL deduplication
+  // Handle <URL url="IMG"><IMG src="IMG">...</IMG></URL> before other rules
+  const urlImgPat =
+      '<URL\\b[^>]*url="([^"]+)"[^>]*>(?:<s>.*?<\\/s>)?\\s*' +
+      '<IMG\\b[^>]*src="\\1"[^>]*>[\\s\\S]*?<\\/IMG>' +
+      '\\s*(?:<e>.*?<\\/e>)?<\\/URL>';
+  text = text.replace(new RegExp(urlImgPat, 'gi'), '$1');
+
+  // Standard <IMG>
   text = text.replace(/<IMG[^>]*src="([^"]+)"[^>]*>.*?<\/IMG>/gi, '$1');
 
-  // 3. URLs
+  // Markdown linked images pointing to the same URL:
+  // e.g. [![](URL)](URL) or [URL](URL)
+  const mdImgLinkPat =
+      '\\[\\s*!\\[.*?\\]\\((https?:\\/\\/[^\\s)]+)\\)\\s*\\]\\(\\1\\)';
+  text = text.replace(new RegExp(mdImgLinkPat, 'gi'), '$1');
+  text = text.replace(
+      /\[\s*(https?:\/\/[^\s\]]+)\s*\]\(\1\)/gi,
+      '$1',
+  );
+
+  // Markdown standalone images: ![alt](URL) -> URL
+  text = text.replace(/!\[.*?\]\((https?:\/\/[^\s)]+)\)/gi, '$1');
+
+  // 4. URLs (s9e <URL> tags)
   const urlRegex = new RegExp(
       '<URL[^>]*url="([^"]+)"[^>]*>(?:<s>.*?<\\/s>)?' +
       '([\\s\\S]*?)(?:<e>.*?<\\/e>)?<\\/URL>',
@@ -74,15 +114,15 @@ export function flarumToDiscordMarkdown(
   text = text.replace(
       urlRegex,
       (_, url: string, label: string) => {
-        const trimmedLabel = label.trim();
-        if (!trimmedLabel || trimmedLabel === url) {
+        const cleanLabel = label.replace(/<[se]>.*?<\/[se]>/gi, '').trim();
+        if (!cleanLabel || cleanLabel === url) {
           return url;
         }
-        return `${trimmedLabel} (${url})`;
+        return `[${cleanLabel}](${url})`;
       },
   );
 
-  // 4. Code blocks and inline code
+  // 5. Code blocks and inline code
   const codeRegex = new RegExp(
       '<CODE\\b(?:[^>]*lang="([^"]+)")?[^>]*>(?:<s>.*?<\\/s>)?' +
       '([\\s\\S]*?)(?:<e>.*?<\\/e>)?<\\/CODE>',
@@ -99,13 +139,13 @@ export function flarumToDiscordMarkdown(
       '`$1`',
   );
 
-  // 5. Spoilers
+  // 6. Spoilers
   text = text.replace(
       /<SPOILER\b[^>]*>(?:<s>.*?<\/s>)?([\s\S]*?)(?:<e>.*?<\/e>)?<\/SPOILER>/gi,
       '||$1||',
   );
 
-  // 6. Formatting tags with delimiters
+  // 7. Formatting tags with delimiters
   text = text.replace(
       /<B\b[^>]*>(?:<s>.*?<\/s>)?([\s\S]*?)(?:<e>.*?<\/e>)?<\/B>/gi,
       '**$1**',
@@ -125,7 +165,7 @@ export function flarumToDiscordMarkdown(
   );
   text = text.replace(delRegex, '~~$1~~');
 
-  // 7. Headings (s9e XML <H1>–<H6>)
+  // 8. Headings (s9e XML <H1>–<H6>)
   for (let level = 1; level <= 6; level++) {
     const hashes = '#'.repeat(level);
     const hPat =
@@ -135,7 +175,7 @@ export function flarumToDiscordMarkdown(
     text = text.replace(hRegex, `${hashes} $1\n`);
   }
 
-  // 8. Quotes
+  // 9. Quotes
   const quoteRegex = new RegExp(
       '<QUOTE\\b(?:[^>]*author="([^"]+)")?[^>]*>(?:<s>.*?<\\/s>)?' +
       '([\\s\\S]*?)(?:<e>.*?<\\/e>)?<\\/QUOTE>',
@@ -152,7 +192,7 @@ export function flarumToDiscordMarkdown(
       },
   );
 
-  // 9. Lists
+  // 10. Lists
   text = text.replace(
       /<LI\b[^>]*>(?:<s>.*?<\/s>)?([\s\S]*?)<\/LI>/gi,
       (_, item: string) => {
@@ -178,9 +218,31 @@ export function flarumToDiscordMarkdown(
   text = text.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '__$1__');
   text = text.replace(/\[(?:s|del)\]([\s\S]*?)\[\/(?:s|del)\]/gi, '~~$1~~');
   text = text.replace(/\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi, '||$1||');
-  text = text.replace(/\[url=([^\]]+)\]([\s\S]*?)\[\/url\]/gi, '$2 ($1)');
-  text = text.replace(/\[url\]([\s\S]*?)\[\/url\]/gi, '$1');
+
+  // BBCode [url=URL][img]URL[/img][/url] image deduplication
+  const bbcodeSamePat =
+      '\\[url=(https?:\\/\\/[^\\]]+)\\]\\s*' +
+      '\\[img\\]\\1\\[\\/img\\]\\s*\\[\\/url\\]';
+  text = text.replace(new RegExp(bbcodeSamePat, 'gi'), '$1');
+  const bbcodeDiffPat =
+      '\\[url=(https?:\\/\\/[^\\]]+)\\]\\s*' +
+      '\\[img\\](https?:\\/\\/[^\\]]+)\\[\\/img\\]\\s*\\[\\/url\\]';
+  text = text.replace(new RegExp(bbcodeDiffPat, 'gi'), '$2');
   text = text.replace(/\[img\]([\s\S]*?)\[\/img\]/gi, '$1');
+
+  // General BBCode [url=URL]LABEL[/url]
+  text = text.replace(
+      /\[url=([^\]]+)\]([\s\S]*?)\[\/url\]/gi,
+      (_, url: string, label: string) => {
+        const trimmed = label.trim();
+        if (!trimmed || trimmed === url) {
+          return url;
+        }
+        return `[${trimmed}](${url})`;
+      },
+  );
+  text = text.replace(/\[url\]([\s\S]*?)\[\/url\]/gi, '$1');
+
   text = text.replace(
       /\[quote(?:="([^"]*)")?\]([\s\S]*?)\[\/quote\]/gi,
       (_, author: string | undefined, quote: string) => {

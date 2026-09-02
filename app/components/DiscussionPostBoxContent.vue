@@ -37,7 +37,13 @@
       {{ formatTimestamp(j.timestamp, j.format) }}
     </time>
 
-    <!-- Masked link [text](url) -->
+    <!-- Masked link [text](url) - if target is an image, render directly as image -->
+    <span
+      v-else-if="j.type === 'link' && isMediaUrl(j.target)"
+      class="ts-image is-rounded is-bordered"
+    >
+      <img :src="j.target" alt="">
+    </span>
     <a
       v-else-if="j.type === 'link'"
       :href="j.target"
@@ -48,7 +54,13 @@
       <discussion-post-box-content :id="props.id" :content="j.content" />
     </a>
 
-    <!-- Autolink <url> -->
+    <!-- Autolink <url> - if target is an image, render directly as image -->
+    <span
+      v-else-if="j.type === 'autolink' && isMediaUrl(j.target)"
+      class="ts-image is-rounded is-bordered"
+    >
+      <img :src="j.target" alt="">
+    </span>
     <a
       v-else-if="j.type === 'autolink'"
       :href="j.target"
@@ -323,6 +335,38 @@ function postProcessNodes(nodes) {
       result.push({type: 'ol', items});
       continue;
     }
+    // Deduplicate repeated media/image nodes (e.g. image URL followed by (image URL))
+    if (
+      (node.type === 'url' || node.type === 'link') &&
+      typeof node.target === 'string' &&
+      isMediaUrl(node.target)
+    ) {
+      result.push({type: 'url', target: node.target});
+      i++;
+      if (
+        i < nodes.length &&
+        nodes[i].type === 'text' &&
+        /^\s*\(?\s*$/.test(nodes[i].content)
+      ) {
+        const nextIdx = i + 1;
+        if (
+          nextIdx < nodes.length &&
+          (nodes[nextIdx].type === 'url' || nodes[nextIdx].type === 'link') &&
+          nodes[nextIdx].target === node.target
+        ) {
+          i = nextIdx + 1;
+          if (
+            i < nodes.length &&
+            nodes[i].type === 'text' &&
+            /^\s*\)?\s*$/.test(nodes[i].content)
+          ) {
+            i++;
+          }
+        }
+      }
+      continue;
+    }
+
     result.push(node);
     i++;
   }
