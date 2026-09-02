@@ -151,11 +151,11 @@ export function flarumToDiscordMarkdown(
       '`$1`',
   );
 
-  // 6. Spoilers
-  text = text.replace(
-      /<SPOILER\b[^>]*>(?:<s>.*?<\/s>)?([\s\S]*?)(?:<e>.*?<\/e>)?<\/SPOILER>/gi,
-      '||$1||',
-  );
+  // 6. Spoilers (including inline spoiler <ISPOILER>)
+  const spoilerPat =
+      '<(?:I)?SPOILER\\b[^>]*>(?:<s>.*?<\\/s>)?' +
+      '([\\s\\S]*?)(?:<e>.*?<\\/e>)?<\\/(?:I)?SPOILER>';
+  text = text.replace(new RegExp(spoilerPat, 'gi'), '||$1||');
 
   // 7. Formatting tags with delimiters
   text = text.replace(
@@ -229,7 +229,9 @@ export function flarumToDiscordMarkdown(
   text = text.replace(/\[i\]([\s\S]*?)\[\/i\]/gi, '*$1*');
   text = text.replace(/\[u\]([\s\S]*?)\[\/u\]/gi, '__$1__');
   text = text.replace(/\[(?:s|del)\]([\s\S]*?)\[\/(?:s|del)\]/gi, '~~$1~~');
-  text = text.replace(/\[spoiler\]([\s\S]*?)\[\/spoiler\]/gi, '||$1||');
+  const bbcodeSpoilerPat =
+      '\\[(?:i)?spoiler\\]([\\s\\S]*?)\\[\\/(?:i)?spoiler\\]';
+  text = text.replace(new RegExp(bbcodeSpoilerPat, 'gi'), '||$1||');
 
   // BBCode [url=URL][img]URL[/img][/url] image deduplication
   const bbcodeSamePat =

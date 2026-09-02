@@ -95,6 +95,11 @@ describe('flarumFormatter', () => {
       expect(converted).toContain('__Underline__');
       expect(converted).toContain('~~Strikethrough~~');
       expect(converted).toContain('||Secret||');
+
+      const ispoiler = '<r><p><ISPOILER>我剛剛偷加了一些了，加上自己額外設計</ISPOILER></p></r>';
+      expect(flarumToDiscordMarkdown(ispoiler)).toBe(
+          '||我剛剛偷加了一些了，加上自己額外設計||',
+      );
     });
 
     it('converts quotes with authors', () => {
