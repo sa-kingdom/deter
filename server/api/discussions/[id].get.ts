@@ -97,25 +97,46 @@ export default defineEventHandler(async (event) => {
         icon: t.icon,
       },
     );
-    const posts = (legacyDiscussion.posts || []).map((post) => {
-      const postUser = post.user;
-      const md = flarumToDiscordMarkdown(post.content);
-      return {
-        id: `N${post.id}`,
-        content: parse(md),
-        userId: postUser ? `N${postUser.id}` : 'unknown',
-        media: [],
-        createdAt: post.createdAt,
-        updatedAt: post.editedAt || post.createdAt,
-        discussionId,
-        user: {
-          id: postUser ? `N${postUser.id}` : 'unknown',
-          username: postUser ? postUser.username : 'Unknown User',
-          displayName: postUser ? postUser.username : 'Unknown User',
-          avatarHash: postUser?.avatarUrl || '',
-        },
-      };
-    });
+    const posts = (legacyDiscussion.posts || [])
+        .filter((post) => {
+          if (post.type && post.type !== 'comment') {
+            return false;
+          }
+          if (post.content) {
+            const trimmed = post.content.trim();
+            if (
+              trimmed.startsWith('{"sticky":') ||
+              trimmed.startsWith('{"title":') ||
+              trimmed.startsWith('{"tagIds":') ||
+              trimmed.startsWith('{"locked":')
+            ) {
+              return false;
+            }
+          }
+          return true;
+        })
+        .map((post) => {
+          const postUser = post.user;
+          const md = flarumToDiscordMarkdown(post.content);
+          return {
+            id: `N${post.id}`,
+            content: parse(md, 'extended'),
+            userId: postUser ? `N${postUser.id}` : 'unknown',
+            media: [],
+            createdAt: post.createdAt,
+            updatedAt: post.editedAt || post.createdAt,
+            discussionId,
+            user: {
+              id: postUser ? `N${postUser.id}` : 'unknown',
+              username: postUser ? postUser.username : 'Unknown User',
+              displayName: postUser ? postUser.username : 'Unknown User',
+              avatarHash: postUser?.avatarUrl || '',
+            },
+          };
+        })
+        .filter((post) =>
+          Array.isArray(post.content) && post.content.length > 0,
+        );
 
     return {
       id: discussionId,
@@ -210,7 +231,7 @@ export default defineEventHandler(async (event) => {
             },
         );
 
-        post.content = parse(content);
+        post.content = parse(content, 'extended');
       }
     }
   }
