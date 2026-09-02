@@ -61,7 +61,7 @@ describe('flarumFormatter', () => {
       const urlWithLabel =
         '<r><URL url="https://example.com"><s>[url=https://example.com]</s>My Site<e>[/url]</e></URL></r>';
       expect(flarumToDiscordMarkdown(urlWithLabel)).toBe(
-          'My Site (https://example.com)',
+          '[My Site](https://example.com)',
       );
 
       const urlPlain =
@@ -123,6 +123,49 @@ describe('flarumFormatter', () => {
       expect(flarumToDiscordMarkdown(h3)).toContain('### Sub');
     });
 
+    it('converts FancyPants <FP> tags', () => {
+      const fp = '<r><p><FP char="…"><s>...</s></FP></p></r>';
+      expect(flarumToDiscordMarkdown(fp)).toBe('…');
+
+      const fpQuote = '<r><p><FP char="”">"</FP></p></r>';
+      expect(flarumToDiscordMarkdown(fpQuote)).toBe('”');
+    });
+
+    it('hides system event posts', () => {
+      expect(flarumToDiscordMarkdown('{"sticky":false}')).toBe('');
+      expect(flarumToDiscordMarkdown('{"title":"New Title"}')).toBe('');
+      expect(flarumToDiscordMarkdown('{"tagIds":[1,2]}')).toBe('');
+    });
+
+    it('deduplicates redundant image links', () => {
+      const s9e = '<r><URL url="https://example.com/pic.png">' +
+        '<s>[url=https://example.com/pic.png]</s>' +
+        '<IMG src="https://example.com/pic.png"><s>[img]</s>https://example.com/pic.png<e>[/img]</e></IMG>' +
+        '<e>[/url]</e></URL></r>';
+      expect(flarumToDiscordMarkdown(s9e)).toBe('https://example.com/pic.png');
+
+      const bbcode = '[url=https://example.com/pic.png][img]https://example.com/pic.png[/img][/url]';
+      expect(flarumToDiscordMarkdown(bbcode)).toBe('https://example.com/pic.png');
+
+      const mdLinked = '[![](https://example.com/pic.png)](https://example.com/pic.png)';
+      expect(flarumToDiscordMarkdown(mdLinked)).toBe('https://example.com/pic.png');
+
+      const mdLinkedAlt = '[![alt](https://example.com/pic.png)](https://example.com/pic.png)';
+      expect(flarumToDiscordMarkdown(mdLinkedAlt)).toBe('https://example.com/pic.png');
+
+      const mdSame = '[https://example.com/pic.png](https://example.com/pic.png)';
+      expect(flarumToDiscordMarkdown(mdSame)).toBe('https://example.com/pic.png');
+    });
+
+    it('converts <YOUTUBE> media embed tags', () => {
+      const yt = '<r><YOUTUBE id="8I66lrj6CO8">' +
+        '[https://youtu.be/8I66lrj6CO8](https://youtu.be/8I66lrj6CO8)' +
+        '</YOUTUBE></r>';
+      expect(flarumToDiscordMarkdown(yt)).toBe(
+          'https://www.youtube.com/watch?v=8I66lrj6CO8',
+      );
+    });
+
     it('produces valid AST with discord-markdown-parser', () => {
       const sample =
         '<r><p><B><s>[b]</s>Important<e>[/b]</e></B></p>' +
@@ -130,7 +173,7 @@ describe('flarumFormatter', () => {
         '<URL url="https://example.com">https://example.com</URL></p></r>';
 
       const md = flarumToDiscordMarkdown(sample);
-      const ast = parse(md);
+      const ast = parse(md, 'extended');
       expect(Array.isArray(ast)).toBe(true);
       expect(ast.some((node) => node.type === 'strong')).toBe(true);
     });
