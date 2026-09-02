@@ -37,7 +37,20 @@
       {{ formatTimestamp(j.timestamp, j.format) }}
     </time>
 
-    <!-- Masked link [text](url) - if target is an image, render directly as image -->
+    <!-- Masked link [text](url) - if YouTube, embed video; if image, render image -->
+    <div
+      v-else-if="j.type === 'link' && getYouTubeVideoId(j.target)"
+      class="youtube-embed-wrapper"
+    >
+      <iframe
+        :src="`https://www.youtube-nocookie.com/embed/${getYouTubeVideoId(j.target)}`"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        class="youtube-iframe"
+      />
+    </div>
     <span
       v-else-if="j.type === 'link' && isMediaUrl(j.target)"
       class="ts-image is-rounded is-bordered"
@@ -143,7 +156,20 @@
       >{{ item }}</li>
     </ol>
 
-    <!-- URL: image embed or plain link -->
+    <!-- URL: YouTube embed, image embed or plain link -->
+    <div
+      v-else-if="j.type === 'url' && getYouTubeVideoId(j.target)"
+      class="youtube-embed-wrapper"
+    >
+      <iframe
+        :src="`https://www.youtube-nocookie.com/embed/${getYouTubeVideoId(j.target)}`"
+        title="YouTube video player"
+        frameborder="0"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen
+        class="youtube-iframe"
+      />
+    </div>
     <span
       v-else-if="j.type === 'url'"
       class="url-node"
@@ -216,6 +242,19 @@ function isMediaUrl(url) {
   if (/\.(?:png|jpe?g|gif|webp|svg|gifv)(\?.*)?$/i.test(url)) return true;
   // tenor / giphy embed pages should still just render as link, not img
   return false;
+}
+
+/**
+ * Extracts YouTube video ID from a YouTube watch or short URL.
+ * @param url - The candidate URL string.
+ * @returns 11-character video ID or null if not a YouTube URL.
+ */
+function getYouTubeVideoId(url) {
+  if (!url || typeof url !== 'string') return null;
+  const regExp =
+    /^(?:https?:\/\/)?(?:www\.)?(?:youtube\.com\/(?:[^/\n\s]+\/\S+\/|(?:v|e(?:mbed)?)\/|\S*?[?&]v=)|youtu\.be\/)([a-zA-Z0-9_-]{11})/;
+  const match = url.match(regExp);
+  return match ? match[1] : null;
 }
 
 /**
@@ -445,5 +484,22 @@ ul, ol {
 
 li {
   margin: 0.1em 0;
+}
+
+.youtube-embed-wrapper {
+  margin: 0.5rem 0;
+  max-width: 560px;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  border-radius: 8px;
+  overflow: hidden;
+  background: var(--ts-gray-900);
+}
+
+.youtube-iframe {
+  width: 100%;
+  height: 100%;
+  border: none;
+  display: block;
 }
 </style>

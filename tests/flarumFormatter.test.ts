@@ -157,6 +157,15 @@ describe('flarumFormatter', () => {
       expect(flarumToDiscordMarkdown(mdSame)).toBe('https://example.com/pic.png');
     });
 
+    it('converts <YOUTUBE> media embed tags', () => {
+      const yt = '<r><YOUTUBE id="8I66lrj6CO8">' +
+        '[https://youtu.be/8I66lrj6CO8](https://youtu.be/8I66lrj6CO8)' +
+        '</YOUTUBE></r>';
+      expect(flarumToDiscordMarkdown(yt)).toBe(
+          'https://www.youtube.com/watch?v=8I66lrj6CO8',
+      );
+    });
+
     it('produces valid AST with discord-markdown-parser', () => {
       const sample =
         '<r><p><B><s>[b]</s>Important<e>[/b]</e></B></p>' +

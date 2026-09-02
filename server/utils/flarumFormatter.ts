@@ -105,7 +105,19 @@ export function flarumToDiscordMarkdown(
   // Markdown standalone images: ![alt](URL) -> URL
   text = text.replace(/!\[.*?\]\((https?:\/\/[^\s)]+)\)/gi, '$1');
 
-  // 4. URLs (s9e <URL> tags)
+  // 4. Media embeds (e.g. <YOUTUBE id="...">...</YOUTUBE>)
+  text = text.replace(
+      /<YOUTUBE\b[^>]*id="([^"]+)"[^>]*>[\s\S]*?<\/YOUTUBE>/gi,
+      'https://www.youtube.com/watch?v=$1',
+  );
+  const ytFallbackPat =
+      '<YOUTUBE\\b[^>]*>[\\s\\S]*?' +
+      '(https?:\\/\\/(?:www\\.)?(?:youtube\\.com|youtu\\.be)\\/' +
+      '[^\\s<)\\]]+)[\\s\\S]*?<\\/YOUTUBE>';
+  text = text.replace(new RegExp(ytFallbackPat, 'gi'), '$1');
+  text = text.replace(/<\/?YOUTUBE\b[^>]*>/gi, '');
+
+  // 5. URLs (s9e <URL> tags)
   const urlRegex = new RegExp(
       '<URL[^>]*url="([^"]+)"[^>]*>(?:<s>.*?<\\/s>)?' +
       '([\\s\\S]*?)(?:<e>.*?<\\/e>)?<\\/URL>',
