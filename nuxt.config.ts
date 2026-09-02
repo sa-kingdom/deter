@@ -17,6 +17,7 @@ export default defineNuxtConfig({
       link: [
         {rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&display=swap'},
         {rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/tocas/4.2.5/tocas.min.css'},
+        {rel: 'stylesheet', href: 'https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.12.0/styles/github-dark.min.css'},
       ],
       script: [
         {src: 'https://cdnjs.cloudflare.com/ajax/libs/tocas/4.2.5/tocas.min.js'},

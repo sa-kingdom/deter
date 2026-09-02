@@ -15,11 +15,13 @@ export default withNuxt([
       'jsdoc/no-types': 'error',
     },
   },
-  // Disable max-len for Vue SFCs
+  // Disable max-len and allow v-html for Vue SFCs
+  // v-html is used only for highlight.js output (pre-sanitized, not user HTML)
   {
     files: ['**/*.vue'],
     rules: {
       'max-len': 'off',
+      'vue/no-v-html': 'off',
     },
   },
 ]);
