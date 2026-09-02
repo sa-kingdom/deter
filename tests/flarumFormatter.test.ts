@@ -11,6 +11,12 @@ describe('flarumFormatter', () => {
       const input = '&amp; &lt; &gt; &quot; &#039; &#39; &nbsp;';
       expect(decodeHtmlEntities(input)).toBe('& < > " \' \'  ');
     });
+
+    it('decodes double-encoded entities', () => {
+      expect(decodeHtmlEntities('&amp;amp;')).toBe('&');
+      expect(decodeHtmlEntities('&amp;lt;')).toBe('<');
+      expect(decodeHtmlEntities('&amp;quot;')).toBe('"');
+    });
   });
 
   describe('flarumToDiscordMarkdown', () => {
@@ -37,9 +43,14 @@ describe('flarumFormatter', () => {
         '<r><USERMENTION id="1" username="alice">@"alice"#1</USERMENTION></r>';
       expect(flarumToDiscordMarkdown(userMention)).toBe('@alice');
 
-      const postMention =
+      // Post mention → friendly floor reference (L1 fix)
+      const postMentionWithNumber =
         '<r><POSTMENTION id="10" number="5">@"bob"#p10</POSTMENTION></r>';
-      expect(flarumToDiscordMarkdown(postMention)).toBe('(Post #5)');
+      expect(flarumToDiscordMarkdown(postMentionWithNumber)).toBe('📌 第 5 樓');
+
+      const postMentionByAuthor =
+        '<r><POSTMENTION id="10">@"bob"#p10</POSTMENTION></r>';
+      expect(flarumToDiscordMarkdown(postMentionByAuthor)).toBe('📌 @bob 的留言');
     });
 
     it('converts images and URLs', () => {
@@ -101,6 +112,15 @@ describe('flarumFormatter', () => {
       const converted = flarumToDiscordMarkdown(list);
       expect(converted).toContain('- Item 1');
       expect(converted).toContain('- Item 2');
+    });
+
+    it('converts Flarum heading XML tags (L2 fix)', () => {
+      const h1 = '<r><H1><s># </s>My Title<e></e></H1></r>';
+      const result = flarumToDiscordMarkdown(h1);
+      expect(result).toContain('# My Title');
+
+      const h3 = '<r><H3><s>### </s>Sub<e></e></H3></r>';
+      expect(flarumToDiscordMarkdown(h3)).toContain('### Sub');
     });
 
     it('produces valid AST with discord-markdown-parser', () => {

@@ -398,12 +398,39 @@ const {
 }
 
 .ts-button:hover {
-  filter: brightness(1.12) !important;
+  filter: brightness(1.06) !important;
 }
 
 .ts-button:active {
   transform: scale(0.96) !important;
-  filter: brightness(0.92) !important;
+  filter: brightness(0.94) !important;
+}
+
+/* Subtle hover & active feedback on dark background to prevent excessive glare */
+@media (prefers-color-scheme: dark) {
+  html:not(.is-light) .ts-button:hover {
+    filter: brightness(1.04) !important;
+  }
+
+  html:not(.is-light) .ts-button:active {
+    filter: brightness(0.94) !important;
+  }
+}
+
+html.is-dark .ts-button:hover,
+html[data-scheme="dark"] .ts-button:hover,
+.has-dark .ts-button:hover,
+.is-dark .ts-button:hover,
+.ts-button.is-dark:hover {
+  filter: brightness(1.04) !important;
+}
+
+html.is-dark .ts-button:active,
+html[data-scheme="dark"] .ts-button:active,
+.has-dark .ts-button:active,
+.is-dark .ts-button:active,
+.ts-button.is-dark:active {
+  filter: brightness(0.94) !important;
 }
 
 /* Menu items hover and active */

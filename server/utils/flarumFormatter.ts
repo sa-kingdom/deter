@@ -1,16 +1,25 @@
 /**
  * Decodes standard HTML entities back into plain characters.
+ * Also handles double-encoded entities (e.g. &amp;amp; → &amp; → &).
  * @param str - The input string containing HTML entities.
  * @returns The unescaped string.
  */
 export function decodeHtmlEntities(str: string): string {
-  return str
-      .replace(/&amp;/g, '&')
-      .replace(/&lt;/g, '<')
-      .replace(/&gt;/g, '>')
-      .replace(/&quot;/g, '"')
-      .replace(/&#039;|&#39;/g, '\'')
-      .replace(/&nbsp;/g, ' ');
+  let text = str;
+  // Double-encoded entities first, then single
+  text = text.replace(/&amp;amp;/g, '&');
+  text = text.replace(/&amp;lt;/g, '<');
+  text = text.replace(/&amp;gt;/g, '>');
+  text = text.replace(/&amp;quot;/g, '"');
+  text = text.replace(/&amp;#039;|&amp;#39;/g, '\'');
+
+  text = text.replace(/&amp;/g, '&');
+  text = text.replace(/&lt;/g, '<');
+  text = text.replace(/&gt;/g, '>');
+  text = text.replace(/&quot;/g, '"');
+  text = text.replace(/&#039;|&#39;/g, '\'');
+  text = text.replace(/&nbsp;/g, ' ');
+  return text;
 }
 
 /**
@@ -42,13 +51,15 @@ export function flarumToDiscordMarkdown(
       /<USERMENTION[^>]*>@"?([^"#<]+)"?#\d+<\/USERMENTION>/gi,
       '@$1',
   );
+
+  // Legacy post mentions: convert to friendly floor reference
   text = text.replace(
       /<POSTMENTION[^>]*number="([^"]+)"[^>]*>.*?<\/POSTMENTION>/gi,
-      '(Post #$1)',
+      '📌 第 $1 樓',
   );
   text = text.replace(
       /<POSTMENTION[^>]*>@"?([^"#<]+)"?#p\d+<\/POSTMENTION>/gi,
-      '(Post by @$1)',
+      '📌 @$1 的留言',
   );
 
   // 2. Images
@@ -114,7 +125,17 @@ export function flarumToDiscordMarkdown(
   );
   text = text.replace(delRegex, '~~$1~~');
 
-  // 7. Quotes
+  // 7. Headings (s9e XML <H1>–<H6>)
+  for (let level = 1; level <= 6; level++) {
+    const hashes = '#'.repeat(level);
+    const hPat =
+        `<H${level}\\b[^>]*>(?:<s>.*?</s>)?` +
+        `([\\s\\S]*?)(?:<e>.*?</e>)?</H${level}>`;
+    const hRegex = new RegExp(hPat, 'gi');
+    text = text.replace(hRegex, `${hashes} $1\n`);
+  }
+
+  // 8. Quotes
   const quoteRegex = new RegExp(
       '<QUOTE\\b(?:[^>]*author="([^"]+)")?[^>]*>(?:<s>.*?<\\/s>)?' +
       '([\\s\\S]*?)(?:<e>.*?<\\/e>)?<\\/QUOTE>',
@@ -131,7 +152,7 @@ export function flarumToDiscordMarkdown(
       },
   );
 
-  // 8. Lists
+  // 9. Lists
   text = text.replace(
       /<LI\b[^>]*>(?:<s>.*?<\/s>)?([\s\S]*?)<\/LI>/gi,
       (_, item: string) => {

@@ -798,4 +798,145 @@ async function handleSendMessage() {
     margin-left: auto;
   }
 }
+
+/* ── Dark Mode & Dark Background Support ── */
+@media (prefers-color-scheme: dark) {
+  html:not(.is-light) .dunya-faux-input:hover {
+    background: var(--ts-gray-100, #2a2a2a);
+    box-shadow: 0 4px 14px rgba(88, 101, 242, 0.2);
+  }
+
+  html:not(.is-light) .dunya-chat-box {
+    background: var(--ts-gray-50, #1e1e1e);
+    border-color: var(--ts-gray-300, #3e3e3e);
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+  }
+
+  html:not(.is-light) .chat-header-bar {
+    background: var(--ts-gray-75, #232323);
+    border-color: var(--ts-gray-200, #2f2f2f);
+  }
+
+  html:not(.is-light) .chat-messages-body {
+    background: var(--ts-gray-50, #1e1e1e);
+  }
+
+  html:not(.is-light) .quick-prompt-chip {
+    background: var(--ts-gray-100, #2a2a2a);
+    color: var(--ts-gray-700, #dcdcdc);
+    border-color: var(--ts-gray-300, #3e3e3e);
+  }
+
+  html:not(.is-light) .quick-prompt-chip:hover {
+    background: rgba(88, 101, 242, 0.16);
+    border-color: var(--ts-primary-500, #5865f2);
+    color: var(--ts-primary-400, #7983f5);
+  }
+
+  html:not(.is-light) .message-bubble.is-assistant {
+    background-color: var(--ts-gray-100, #2a2a2a);
+    color: var(--ts-gray-800, #fafafa);
+    border-color: var(--ts-gray-200, #2f2f2f);
+  }
+
+  html:not(.is-light) .chat-footer-bar {
+    background: var(--ts-gray-50, #1e1e1e);
+    border-color: var(--ts-gray-200, #2f2f2f);
+  }
+
+  html:not(.is-light) .integrated-input-box {
+    background: var(--ts-gray-75, #232323);
+    border-color: var(--ts-gray-300, #3e3e3e);
+  }
+
+  html:not(.is-light) .integrated-input-box:focus-within {
+    background: var(--ts-gray-100, #2a2a2a);
+    border-color: var(--ts-primary-500, #5865f2);
+    box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.25);
+  }
+}
+
+html.is-dark .dunya-faux-input:hover,
+html[data-scheme="dark"] .dunya-faux-input:hover,
+.has-dark .dunya-faux-input:hover,
+.is-dark .dunya-faux-input:hover {
+  background: var(--ts-gray-100, #2a2a2a);
+  box-shadow: 0 4px 14px rgba(88, 101, 242, 0.2);
+}
+
+html.is-dark .dunya-chat-box,
+html[data-scheme="dark"] .dunya-chat-box,
+.has-dark .dunya-chat-box,
+.is-dark .dunya-chat-box {
+  background: var(--ts-gray-50, #1e1e1e);
+  border-color: var(--ts-gray-300, #3e3e3e);
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.4);
+}
+
+html.is-dark .chat-header-bar,
+html[data-scheme="dark"] .chat-header-bar,
+.has-dark .chat-header-bar,
+.is-dark .chat-header-bar {
+  background: var(--ts-gray-75, #232323);
+  border-color: var(--ts-gray-200, #2f2f2f);
+}
+
+html.is-dark .chat-messages-body,
+html[data-scheme="dark"] .chat-messages-body,
+.has-dark .chat-messages-body,
+.is-dark .chat-messages-body {
+  background: var(--ts-gray-50, #1e1e1e);
+}
+
+html.is-dark .quick-prompt-chip,
+html[data-scheme="dark"] .quick-prompt-chip,
+.has-dark .quick-prompt-chip,
+.is-dark .quick-prompt-chip {
+  background: var(--ts-gray-100, #2a2a2a);
+  color: var(--ts-gray-700, #dcdcdc);
+  border-color: var(--ts-gray-300, #3e3e3e);
+}
+
+html.is-dark .quick-prompt-chip:hover,
+html[data-scheme="dark"] .quick-prompt-chip:hover,
+.has-dark .quick-prompt-chip:hover,
+.is-dark .quick-prompt-chip:hover {
+  background: rgba(88, 101, 242, 0.16);
+  border-color: var(--ts-primary-500, #5865f2);
+  color: var(--ts-primary-400, #7983f5);
+}
+
+html.is-dark .message-bubble.is-assistant,
+html[data-scheme="dark"] .message-bubble.is-assistant,
+.has-dark .message-bubble.is-assistant,
+.is-dark .message-bubble.is-assistant {
+  background-color: var(--ts-gray-100, #2a2a2a);
+  color: var(--ts-gray-800, #fafafa);
+  border-color: var(--ts-gray-200, #2f2f2f);
+}
+
+html.is-dark .chat-footer-bar,
+html[data-scheme="dark"] .chat-footer-bar,
+.has-dark .chat-footer-bar,
+.is-dark .chat-footer-bar {
+  background: var(--ts-gray-50, #1e1e1e);
+  border-color: var(--ts-gray-200, #2f2f2f);
+}
+
+html.is-dark .integrated-input-box,
+html[data-scheme="dark"] .integrated-input-box,
+.has-dark .integrated-input-box,
+.is-dark .integrated-input-box {
+  background: var(--ts-gray-75, #232323);
+  border-color: var(--ts-gray-300, #3e3e3e);
+}
+
+html.is-dark .integrated-input-box:focus-within,
+html[data-scheme="dark"] .integrated-input-box:focus-within,
+.has-dark .integrated-input-box:focus-within,
+.is-dark .integrated-input-box:focus-within {
+  background: var(--ts-gray-100, #2a2a2a);
+  border-color: var(--ts-primary-500, #5865f2);
+  box-shadow: 0 0 0 2px rgba(88, 101, 242, 0.25);
+}
 </style>
