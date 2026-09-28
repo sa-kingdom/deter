@@ -45,13 +45,14 @@
     <!-- News List -->
     <template v-if="items.length > 0">
       <div class="news-list has-bottom-spaced">
-        <a
+        <div
           v-for="item in items"
           :key="item.id"
-          :href="item.link"
-          target="_blank"
-          rel="noopener noreferrer"
           class="ts-segment is-interactive news-item"
+          role="button"
+          tabindex="0"
+          @click="openNews(item)"
+          @keydown.enter="openNews(item)"
         >
           <div class="ts-text is-bold has-bottom-spaced-tiny">
             {{ item.title }}
@@ -73,7 +74,7 @@
               class="ts-icon is-arrow-right-icon news-arrow"
             />
           </div>
-        </a>
+        </div>
       </div>
     </template>
 
@@ -113,6 +114,9 @@
         RSS 提供
       </span>
     </div>
+
+    <!-- News Detail Modal -->
+    <news-modal :item="selectedNews" @close="selectedNews = null" />
   </div>
 </template>
 
@@ -165,6 +169,16 @@ watch(activeCategory, (slug) => {
 function loadMore() {
   limit.value += 30;
 }
+
+const selectedNews = ref(null);
+
+/**
+ * Open the detail modal for a news item.
+ * @param item - News item to display.
+ */
+function openNews(item) {
+  selectedNews.value = item;
+}
 </script>
 
 <style scoped>
@@ -178,6 +192,7 @@ function loadMore() {
   display: block;
   text-decoration: none;
   color: inherit;
+  cursor: pointer;
 }
 
 .news-category {

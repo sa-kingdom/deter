@@ -19,13 +19,14 @@
 
     <template v-else>
       <div class="news-list">
-        <a
+        <div
           v-for="item in items"
           :key="item.id"
-          :href="item.link"
-          target="_blank"
-          rel="noopener noreferrer"
           class="news-link"
+          role="button"
+          tabindex="0"
+          @click="selectedNews = item"
+          @keydown.enter="selectedNews = item"
         >
           <div class="ts-text is-small news-title">
             {{ item.title }}
@@ -33,7 +34,7 @@
           <div class="ts-text is-secondary is-small news-meta">
             {{ item.categoryName }} · {{ $dayjs(item.publishedAt).fromNow() }}
           </div>
-        </a>
+        </div>
       </div>
       <NuxtLink
         to="/news"
@@ -42,11 +43,13 @@
         <span class="ts-icon is-eye-icon" /> 查看所有新聞
       </NuxtLink>
     </template>
+
+    <news-modal :item="selectedNews" @close="selectedNews = null" />
   </div>
 </template>
 
 <script setup>
-import {computed} from 'vue';
+import {computed, ref} from 'vue';
 
 const {apiInvokeBaseUrl} = useRuntimeConfig().public;
 
@@ -56,6 +59,8 @@ const {data, pending, error} = await useFetch(
 );
 
 const items = computed(() => data.value?.items || []);
+
+const selectedNews = ref(null);
 </script>
 
 <style scoped>
