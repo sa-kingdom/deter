@@ -833,7 +833,7 @@ async function handleSendMessage() {
     color: var(--ts-primary-400, #7983f5);
   }
 
-  html:not(.is-light) .message-bubble.is-assistant {
+  html:not(.is-light) .message-row.is-assistant .message-bubble {
     background-color: var(--ts-gray-100, #2a2a2a);
     color: var(--ts-gray-800, #fafafa);
     border-color: var(--ts-gray-200, #2f2f2f);
@@ -906,10 +906,10 @@ html[data-scheme="dark"] .quick-prompt-chip:hover,
   color: var(--ts-primary-400, #7983f5);
 }
 
-html.is-dark .message-bubble.is-assistant,
-html[data-scheme="dark"] .message-bubble.is-assistant,
-.has-dark .message-bubble.is-assistant,
-.is-dark .message-bubble.is-assistant {
+html.is-dark .message-row.is-assistant .message-bubble,
+html[data-scheme="dark"] .message-row.is-assistant .message-bubble,
+.has-dark .message-row.is-assistant .message-bubble,
+.is-dark .message-row.is-assistant .message-bubble {
   background-color: var(--ts-gray-100, #2a2a2a);
   color: var(--ts-gray-800, #fafafa);
   border-color: var(--ts-gray-200, #2f2f2f);
