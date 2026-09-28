@@ -118,6 +118,13 @@
             >
               <span class="ts-icon is-house-icon" /> 全部話題
             </NuxtLink>
+            <NuxtLink
+              to="/news"
+              class="item"
+              @click="isDrawerOpen = false"
+            >
+              <span class="ts-icon is-newspaper-icon" /> 臺灣新聞
+            </NuxtLink>
           </div>
 
           <!-- Collections -->
@@ -207,6 +214,9 @@
                 >
                   <span class="ts-icon is-house-icon" /> 全部話題
                 </NuxtLink>
+                <NuxtLink to="/news" class="item">
+                  <span class="ts-icon is-newspaper-icon" /> 臺灣新聞
+                </NuxtLink>
               </div>
 
               <div class="ts-divider is-section" />
@@ -284,6 +294,9 @@
                     <span class="ts-icon is-check-to-slot-icon" /> 隱私權政策
                   </NuxtLink>
                 </div>
+              </div>
+              <div class="has-top-spaced">
+                <news-sidebar />
               </div>
             </div>
           </div>
