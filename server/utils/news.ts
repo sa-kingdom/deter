@@ -157,6 +157,10 @@ export async function fetchTaiwanNews(): Promise<NewsItem[]> {
         }),
     );
 
+    // Deduplicate across feeds: CNA syndicates the same article
+    // in multiple categories, and duplicate keys break Vue DOM
+    // patching on the client.
+    const seenIds = new Set<string>();
     const items = results
         .flatMap((result) => (
           result.status === 'fulfilled' ? result.value : []
@@ -164,7 +168,12 @@ export async function fetchTaiwanNews(): Promise<NewsItem[]> {
         .sort((a, b) =>
           Date.parse(b.publishedAt || '0') -
           Date.parse(a.publishedAt || '0'),
-        );
+        )
+        .filter((item) => {
+          if (seenIds.has(item.id)) return false;
+          seenIds.add(item.id);
+          return true;
+        });
 
     const failed = results.filter((r) => r.status === 'rejected');
     if (failed.length > 0) {
