@@ -113,7 +113,7 @@
             <NuxtLink
               to="/"
               class="item"
-              :class="{'is-active': !activeCollection}"
+              :class="{'is-active': isDiscussionsFeed}"
               @click="isDrawerOpen = false"
             >
               <span class="ts-icon is-house-icon" /> 全部話題
@@ -121,6 +121,7 @@
             <NuxtLink
               to="/news"
               class="item"
+              :class="{'is-active': route.path === '/news'}"
               @click="isDrawerOpen = false"
             >
               <span class="ts-icon is-newspaper-icon" /> 臺灣新聞
@@ -210,11 +211,15 @@
                 <NuxtLink
                   to="/"
                   class="item"
-                  :class="{'is-active': !activeCollection}"
+                  :class="{'is-active': isDiscussionsFeed}"
                 >
                   <span class="ts-icon is-house-icon" /> 全部話題
                 </NuxtLink>
-                <NuxtLink to="/news" class="item">
+                <NuxtLink
+                  to="/news"
+                  class="item"
+                  :class="{'is-active': route.path === '/news'}"
+                >
                   <span class="ts-icon is-newspaper-icon" /> 臺灣新聞
                 </NuxtLink>
               </div>
@@ -337,6 +342,10 @@ const activeCollection = computed(() =>
   route.query.collection ?
     String(route.query.collection) :
     null,
+);
+
+const isDiscussionsFeed = computed(() =>
+  route.path === '/' && !activeCollection.value,
 );
 
 const {apiInvokeBaseUrl} = useRuntimeConfig().public;
