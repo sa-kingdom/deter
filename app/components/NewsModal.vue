@@ -1,0 +1,108 @@
+<template>
+  <Teleport to="body">
+    <div
+      v-if="item"
+      class="ts-modal is-visible"
+      role="dialog"
+      aria-modal="true"
+      :aria-label="item.title"
+      @click.self="emit('close')"
+    >
+      <div class="content">
+        <button
+          type="button"
+          class="ts-close news-modal-close"
+          aria-label="關閉"
+          @click="emit('close')"
+        />
+        <div class="ts-content">
+          <div class="ts-text is-bold is-large">
+            {{ item.title }}
+          </div>
+          <div class="ts-wrap is-compact has-top-spaced-small">
+            <span class="ts-text is-small is-bold news-category">
+              {{ item.categoryName }}
+            </span>
+            <span class="ts-text is-secondary is-small">
+              {{ item.source }}
+            </span>
+            <span class="ts-text is-secondary is-small">
+              {{ $dayjs(item.publishedAt).format('YYYY/MM/DD HH:mm') }}
+            </span>
+          </div>
+          <div class="ts-divider is-section" />
+          <p class="ts-text">{{ item.description }}</p>
+          <div class="ts-text is-secondary is-small has-top-spaced-small">
+            內容為中央社 RSS 提供之新聞摘要。
+          </div>
+          <div class="ts-wrap has-top-spaced">
+            <button
+              type="button"
+              class="ts-button is-secondary"
+              @click="emit('close')"
+            >
+              關閉
+            </button>
+            <a
+              :href="item.link"
+              target="_blank"
+              rel="noopener noreferrer"
+              class="ts-button is-primary is-start-icon"
+            >
+              <span class="ts-icon is-up-right-from-square-icon" />
+              檢視原文
+            </a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </Teleport>
+</template>
+
+<script setup>
+import {onBeforeUnmount, onMounted} from 'vue';
+
+defineProps({
+  item: {
+    type: Object,
+    default: null,
+  },
+});
+
+const emit = defineEmits(['close']);
+
+/**
+ * Close the modal when the Escape key is pressed.
+ * @param event - Keyboard event.
+ */
+function onKeydown(event) {
+  if (event.key === 'Escape') {
+    emit('close');
+  }
+}
+
+onMounted(() => {
+  window.addEventListener('keydown', onKeydown);
+});
+
+onBeforeUnmount(() => {
+  window.removeEventListener('keydown', onKeydown);
+});
+</script>
+
+<style scoped>
+.content {
+  position: relative;
+}
+
+.news-modal-close {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  z-index: 1;
+}
+
+.news-category {
+  color: #5865f2;
+}
+</style>
