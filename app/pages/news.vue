@@ -44,7 +44,7 @@
 
     <!-- News List -->
     <template v-if="items.length > 0">
-      <div class="ts-list is-separated has-bottom-spaced">
+      <div class="news-list has-bottom-spaced">
         <a
           v-for="item in items"
           :key="item.id"
@@ -70,7 +70,7 @@
               {{ $dayjs(item.publishedAt).format('YYYY/MM/DD HH:mm') }}
             </span>
             <span
-              class="ts-icon is-arrow-right-icon is-end-spaced-auto is-secondary"
+              class="ts-icon is-arrow-right-icon news-arrow"
             />
           </div>
         </a>
@@ -168,6 +168,12 @@ function loadMore() {
 </script>
 
 <style scoped>
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
 .news-item {
   display: block;
   text-decoration: none;
@@ -176,5 +182,10 @@ function loadMore() {
 
 .news-category {
   color: #5865f2;
+}
+
+.news-arrow {
+  margin-left: auto;
+  color: var(--ts-gray-500);
 }
 </style>

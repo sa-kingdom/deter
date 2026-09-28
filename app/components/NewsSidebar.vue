@@ -18,26 +18,20 @@
     </div>
 
     <template v-else>
-      <div class="ts-menu is-separated is-dense">
+      <div class="news-list">
         <a
           v-for="item in items"
           :key="item.id"
           :href="item.link"
           target="_blank"
           rel="noopener noreferrer"
-          class="item"
+          class="news-link"
         >
-          <div class="ts-text is-small has-bottom-spaced-tiny">
+          <div class="ts-text is-small news-title">
             {{ item.title }}
           </div>
-          <div class="ts-wrap is-compact">
-            <span class="ts-text is-secondary is-small">
-              {{ item.categoryName }}
-            </span>
-            <span class="ts-text is-secondary is-small">·</span>
-            <span class="ts-text is-secondary is-small">
-              {{ $dayjs(item.publishedAt).fromNow() }}
-            </span>
+          <div class="ts-text is-secondary is-small news-meta">
+            {{ item.categoryName }} · {{ $dayjs(item.publishedAt).fromNow() }}
           </div>
         </a>
       </div>
@@ -63,3 +57,33 @@ const {data, pending, error} = await useFetch(
 
 const items = computed(() => data.value?.items || []);
 </script>
+
+<style scoped>
+.news-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.news-link {
+  display: block;
+  padding: 0.65rem 1rem;
+  border-radius: 0.4rem;
+  color: inherit;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.news-link:hover {
+  background: var(--ts-gray-75);
+}
+
+.news-title {
+  line-height: 1.4;
+  margin-bottom: 0.25rem;
+}
+
+.news-meta {
+  line-height: 1.2;
+}
+</style>
