@@ -34,9 +34,9 @@
       </a>
     </div>
 
-    <!-- Loading indicator on refetch -->
+    <!-- Loading indicator on refetch (shown for at least 1s to avoid flashing) -->
     <div
-      v-if="status === 'pending'"
+      v-if="showLoading"
       class="ts-content is-dense has-center-aligned"
     >
       <span class="ts-loading is-indeterminate" />
@@ -80,7 +80,7 @@
 
     <!-- Empty / Error -->
     <div
-      v-else-if="status !== 'pending'"
+      v-else-if="!showLoading"
       class="ts-content has-center-aligned"
     >
       <span class="ts-text is-secondary">
@@ -90,7 +90,7 @@
 
     <!-- Load More -->
     <div
-      v-if="hasMore && status !== 'pending'"
+      v-if="hasMore && !showLoading"
       class="ts-content is-dense has-center-aligned"
     >
       <button
@@ -121,7 +121,7 @@
 </template>
 
 <script setup>
-import {computed, ref, watch} from 'vue';
+import {computed, onBeforeUnmount, ref, watch} from 'vue';
 
 useHead({title: '臺灣新聞'});
 
@@ -147,6 +147,39 @@ const {data, status} = await useFetch(
 const items = computed(() => data.value?.items || []);
 const hasMore = computed(() => data.value?.hasMore || false);
 const categories = computed(() => data.value?.categories || []);
+
+const MIN_LOADING_MS = 1000;
+
+const showLoading = ref(false);
+let loadingShownAt = 0;
+let hideLoadingTimer = null;
+
+/**
+ * Keep the loading spinner visible for at least 1 second so a fast
+ * refetch does not flash the spinner on and off the screen.
+ */
+watch(status, (newStatus) => {
+  if (newStatus === 'pending') {
+    if (!showLoading.value) {
+      showLoading.value = true;
+      loadingShownAt = Date.now();
+    }
+    return;
+  }
+  if (!showLoading.value) {
+    return;
+  }
+  clearTimeout(hideLoadingTimer);
+  hideLoadingTimer = setTimeout(() => {
+    if (status.value !== 'pending') {
+      showLoading.value = false;
+    }
+  }, Math.max(MIN_LOADING_MS - (Date.now() - loadingShownAt), 0));
+}, {immediate: true});
+
+onBeforeUnmount(() => {
+  clearTimeout(hideLoadingTimer);
+});
 
 /**
  * Switch the active category and reset pagination.
