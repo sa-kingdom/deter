@@ -2,7 +2,7 @@
   <Teleport to="body">
     <div
       v-if="item"
-      class="ts-modal is-visible"
+      class="ts-modal is-visible is-large"
       role="dialog"
       aria-modal="true"
       :aria-label="item.title"
@@ -16,7 +16,7 @@
           @click="emit('close')"
         />
         <div class="ts-content">
-          <div class="ts-text is-bold is-large">
+          <div class="ts-text is-bold is-large news-title">
             {{ item.title }}
           </div>
           <div class="ts-wrap is-compact has-top-spaced-small">
@@ -35,14 +35,7 @@
           <div class="ts-text is-secondary is-small has-top-spaced-small">
             內容為中央社 RSS 提供之新聞摘要。
           </div>
-          <div class="ts-wrap has-top-spaced">
-            <button
-              type="button"
-              class="ts-button is-secondary"
-              @click="emit('close')"
-            >
-              關閉
-            </button>
+          <div class="ts-wrap has-top-spaced news-actions">
             <a
               :href="item.link"
               target="_blank"
@@ -52,6 +45,13 @@
               <span class="ts-icon is-up-right-from-square-icon" />
               檢視原文
             </a>
+            <button
+              type="button"
+              class="ts-button is-secondary"
+              @click="emit('close')"
+            >
+              關閉
+            </button>
           </div>
         </div>
       </div>
@@ -93,13 +93,22 @@ onBeforeUnmount(() => {
 <style scoped>
 .content {
   position: relative;
+  max-width: calc(100% - 2rem);
+}
+
+.news-title {
+  padding-right: 2.5rem;
 }
 
 .news-modal-close {
   position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
+  top: 1.15rem;
+  right: 1.15rem;
   z-index: 1;
+}
+
+.news-actions {
+  justify-content: space-between;
 }
 
 .news-category {
