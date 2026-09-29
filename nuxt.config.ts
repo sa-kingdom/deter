@@ -35,28 +35,15 @@ export default defineNuxtConfig({
     preset: 'bun',
   },
   runtimeConfig: {
+    // Server-to-server Dunya data API access (HMAC-signed)
+    dunyaApiBaseUrl: 'http://localhost:3001',
+    dunyaApiSecret: 'dunya-internal-hmac-secret',
     public: {
       githubRepositoryUrl: 'https://github.com/sa-kingdom?q=deter',
       discordServerUrl: 'https://discord.gg/Hr4XQt7Eay',
       apiPublicBaseUrl: 'http://localhost:3000',
       apiInvokeBaseUrl: '/api',
       dunyaApiBaseUrl: 'http://localhost:3001',
-    },
-    database: {
-      name: 'deter',
-      user: 'deter',
-      pass: 'deter',
-      host: '127.0.0.1',
-      port: '3306',
-      logging: false,
-    },
-    legacyDatabase: {
-      name: 'flarum',
-      user: 'deter',
-      pass: 'deter',
-      host: '127.0.0.1',
-      port: '3306',
-      logging: false,
     },
   },
 });

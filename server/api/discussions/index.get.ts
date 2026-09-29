@@ -1,16 +1,78 @@
-import {Op} from 'sequelize';
-import {Discussion, User} from '../../utils/db';
-import {
-  FlarumDiscussion,
-  FlarumUser,
-  FlarumTag,
-} from '../../utils/flarumDb';
 import {
   COLLECTIONS_MAP,
   COLLECTIONS_BY_SLUG,
+  type Collection,
 } from '../../constants/collections';
+import {
+  dunyaFetch,
+  type DunyaDiscussion,
+  type DunyaFeed,
+} from '../../utils/dunya';
 
 const PAGE_SIZE = 20;
+
+/**
+ * Map a legacy Flarum tag from the Dunya API into a collection, preferring
+ * the locally curated collection metadata.
+ * @param tag - Raw tag payload from Dunya.
+ * @returns The collection to expose to the frontend.
+ */
+function toCollection(tag: DunyaDiscussion['tags'][number]): Collection {
+  return COLLECTIONS_MAP[tag.id] || {
+    id: tag.id,
+    name: tag.name,
+    slug: tag.slug,
+    color: tag.color,
+    icon: tag.icon,
+  };
+}
+
+/**
+ * Map a Dunya feed discussion into the frontend discussion item contract.
+ * @param item - Discussion payload from Dunya.
+ * @returns The frontend discussion item.
+ */
+function toFeedItem(item: DunyaDiscussion) {
+  if (item.source === 'flarum') {
+    const collections = item.tags.map(toCollection);
+    return {
+      id: `N${item.id}`,
+      name: item.name,
+      userId: item.authorId ? `N${item.authorId}` : 'unknown',
+      lastMessageId: item.lastMessageId ? `N${item.lastMessageId}` : '',
+      messageCount: item.messageCount,
+      memberCount: item.memberCount,
+      createdAt: item.createdAt,
+      updatedAt: item.updatedAt,
+      collections,
+      tags: collections,
+      user: {
+        id: item.author ? `N${item.author.id}` : 'unknown',
+        username: item.author ?
+          item.author.username :
+          'Unknown User',
+        displayName: item.author ?
+          item.author.displayName :
+          'Unknown User',
+        avatarHash: item.author?.avatarHash ?? '',
+      },
+    };
+  }
+
+  return {
+    id: item.id,
+    name: item.name,
+    userId: item.authorId,
+    lastMessageId: item.lastMessageId ?? '',
+    messageCount: item.messageCount,
+    memberCount: item.memberCount,
+    createdAt: item.createdAt,
+    updatedAt: item.updatedAt,
+    collections: [],
+    tags: [],
+    user: item.author,
+  };
+}
 
 export default defineEventHandler(async (event) => {
   const query = getQuery(event);
@@ -20,10 +82,7 @@ export default defineEventHandler(async (event) => {
     null;
 
   // Cursor: ISO timestamp of the oldest item from the previous page.
-  // Fetch items with updatedAt strictly before this cursor.
-  const beforeCursor = query.before ?
-    new Date(String(query.before)) :
-    null;
+  const beforeCursor = query.before ? String(query.before) : null;
 
   const limit = query.limit ?
     Math.min(Number(query.limit), 100) :
@@ -33,114 +92,25 @@ export default defineEventHandler(async (event) => {
     (COLLECTIONS_BY_SLUG[collectionSlug] ?? null) :
     null;
 
-  // ── Current (Discord-sourced) discussions ────────────────────────
-  const currentWhere: Record<string, unknown> = {};
-  if (beforeCursor) {
-    currentWhere.updatedAt = {[Op.lt]: beforeCursor};
+  const params = new URLSearchParams();
+  if (beforeCursor) params.set('before', beforeCursor);
+  params.set('limit', String(limit));
+  // Legacy Flarum tags share IDs with the local collection definitions.
+  if (filterCollection) params.set('tag', String(filterCollection.id));
+
+  let feed: DunyaFeed;
+  try {
+    feed = await dunyaFetch(`/discussions/feed?${params}`) as DunyaFeed;
+  } catch (error) {
+    console.error('Failed to fetch discussions from Dunya:', error);
+    throw createError({
+      statusCode: 502,
+      statusMessage: 'Failed to fetch discussions',
+    });
   }
 
-  const currentDiscussionsPromise = collectionSlug ?
-    Promise.resolve([]) :
-    Discussion.findAll({
-      where: currentWhere,
-      order: [['updatedAt', 'DESC']],
-      limit,
-      include: User,
-    }).then((rows) =>
-      rows.map((r) => {
-        const data = r.toJSON();
-        return {...data, collections: [], tags: []};
-      }),
-    );
-
-  // ── Legacy (Flarum) discussions ──────────────────────────────────
-  const legacyWhere: Record<string, unknown> = {
-    isPrivate: false,
-    isApproved: true,
-    hiddenAt: null,
+  return {
+    items: feed.items.map(toFeedItem),
+    nextCursor: feed.nextCursor,
   };
-  if (beforeCursor) {
-    legacyWhere.lastPostedAt = {[Op.lt]: beforeCursor};
-  }
-
-  const tagInclude: Record<string, unknown> = {
-    model: FlarumTag,
-    as: 'tags',
-  };
-  if (filterCollection) {
-    tagInclude.where = {id: filterCollection.id};
-    tagInclude.required = true;
-  }
-
-  const legacyDiscussionsPromise = FlarumDiscussion.findAll({
-    where: legacyWhere,
-    order: [['lastPostedAt', 'DESC']],
-    limit,
-    include: [
-      {model: FlarumUser, as: 'user'},
-      tagInclude,
-    ],
-  }).then((rows) =>
-    rows.map((d) => {
-      const u = d.user;
-      const collections = (d.tags || []).map((t) => (
-        COLLECTIONS_MAP[t.id] || {
-          id: t.id,
-          name: t.name,
-          slug: t.slug,
-          color: t.color,
-          icon: t.icon,
-        }
-      ));
-      return {
-        id: `N${d.id}`,
-        name: d.title,
-        userId: d.userId ? `N${d.userId}` : 'unknown',
-        lastMessageId: d.lastPostId ?
-          `N${d.lastPostId}` :
-          '',
-        messageCount: d.commentCount ?? 0,
-        memberCount: d.participantCount ?? 0,
-        createdAt: d.createdAt,
-        updatedAt: d.lastPostedAt || d.createdAt,
-        collections,
-        tags: collections,
-        user: {
-          id: u ? `N${u.id}` : 'unknown',
-          username: u ? u.username : 'Unknown User',
-          displayName: u ? u.username : 'Unknown User',
-          avatarHash: u?.avatarUrl || '',
-        },
-      };
-    }),
-  ).catch((e) => {
-    console.error('Failed to fetch legacy discussions:', e);
-    return [];
-  });
-
-  const [currentDiscussions, legacyDiscussions] = await Promise.all([
-    currentDiscussionsPromise,
-    legacyDiscussionsPromise,
-  ]);
-
-  // Merge and sort descending, then take a single page
-  const merged = [...currentDiscussions, ...legacyDiscussions];
-  merged.sort((a, b) => {
-    const tA = new Date(a.updatedAt || a.createdAt).getTime();
-    const tB = new Date(b.updatedAt || b.createdAt).getTime();
-    return tB - tA;
-  });
-
-  const items = merged.slice(0, limit);
-
-  // Next cursor = updatedAt of the last item in this page
-  const last = items[items.length - 1];
-  const nextCursor = last ?
-    (new Date(last.updatedAt || last.createdAt).toISOString()) :
-    null;
-
-  // Signal end-of-feed when this page is shorter than requested limit
-  const hasMore = items.length >= limit;
-
-  return {items, nextCursor: hasMore ? nextCursor : null};
 });
