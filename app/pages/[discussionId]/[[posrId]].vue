@@ -105,7 +105,11 @@ const {data, error} = await useFetch(
 );
 
 if (error.value) {
-  console.error(error.value);
+  throw createError({
+    statusCode: error.value.statusCode || 404,
+    statusMessage: error.value.statusMessage || 'Discussion not found',
+    fatal: true,
+  });
 }
 
 useHead({
