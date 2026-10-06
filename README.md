@@ -8,15 +8,15 @@ Deter is a lightweight, modern forum frontend and discussion API designed specif
 
 Deter is part of a dual-system architecture designed for high performance and reliability:
 
-- **Dunya (Backend/Syncer)**: Responsible for syncing data from Discord guilds to a local database and caching media (avatars, attachments). **Dunya holds sole responsibility for database schema management (table creation, updates, and migrations).**
-- **Deter (Frontend/API)**: A sleek web interface and API that consumes the data synced by Dunya. Deter is a **database consumer only** and serves cached media via the `/assets` directory.
+- **Dunya (Backend/Syncer)**: Responsible for syncing data from Discord guilds to a local database, caching media (avatars, attachments), and exposing the discussion data through a **HMAC-signed data API**. **Dunya holds sole responsibility for database schema management (table creation, updates, and migrations).**
+- **Deter (Frontend/API)**: A sleek web interface and API that consumes Dunya's data API over HTTP. Deter **no longer accesses the database directly**; its server routes act as a mapping layer on top of Dunya's data API and serve cached media via the `/assets` directory.
 
 ## Tech Stack
 
 - **Framework**: [Nuxt 4](https://nuxt.com/) (Vue 3 with Composition API)
 - **Runtime**: [Bun](https://bun.sh/) (Fast package manager, runner, and bundler)
 - **UI Library**: [Tocas UI](https://tocasui.com/) (A modern, clean UI framework)
-- **Database Layer**: [Sequelize](https://sequelize.org/) (connecting to MySQL/MariaDB managed by Dunya)
+- **Data Layer**: [Dunya Data API](https://github.com/sa-kingdom/dunya) (HMAC-signed HTTP API; Deter no longer queries the database directly)
 - **Animations**: [Vue3-Lottie](https://github.com/chenqingspring/vue3-lottie) (for Discord sticker support)
 
 ## Key Features
@@ -35,7 +35,7 @@ Deter is part of a dual-system architecture designed for high performance and re
 ### Prerequisites
 
 - **Bun**: Ensure you have [Bun](https://bun.sh/) installed.
-- **Dunya**: A running instance of Dunya is required to populate the database and cache media.
+- **Dunya**: A running instance of Dunya is required to serve the discussion data API and cache media.
 
 ### Installation
 
@@ -86,12 +86,9 @@ bun run preview
 Copy `.env.example` (if available) or create a `.env` file with the following configuration:
 
 ```env
-# Database Configuration (Matching Dunya)
-NUXT_DATABASE_NAME=deter
-NUXT_DATABASE_USER=deter
-NUXT_DATABASE_PASS=password
-NUXT_DATABASE_HOST=127.0.0.1
-NUXT_DATABASE_PORT=3306
+# Dunya Data API Configuration (server-to-server, HMAC-signed)
+NUXT_DUNYA_API_BASE_URL=http://localhost:3001
+NUXT_DUNYA_API_SECRET=your_internal_hmac_secret
 
 # API Configuration
 NUXT_PUBLIC_API_INVOKE_BASE_URL=/api

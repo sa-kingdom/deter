@@ -33,7 +33,9 @@
     <!-- Expanded State: Interactive Chat UI -->
     <div
       v-else
+      ref="chatBoxRef"
       class="dunya-chat-box ts-box is-elevated"
+      @focusout="handleChatFocusOut"
     >
       <!-- Chat Header -->
       <div class="chat-header-bar">
@@ -186,7 +188,7 @@
 </template>
 
 <script setup>
-import {ref, computed, nextTick} from 'vue';
+import {ref, computed, nextTick, onMounted, onBeforeUnmount} from 'vue';
 import DunyaAvatar from '~/assets/DunyaAvatar.webp';
 
 const runtimeConfig = useRuntimeConfig();
@@ -202,6 +204,7 @@ const sessionId = ref(null);
 const sessionToken = ref(null);
 const messagesContainerRef = ref(null);
 const inputRef = ref(null);
+const chatBoxRef = ref(null);
 
 const quickPrompts = [
   '近期社群上有哪些熱門話題？',
@@ -226,6 +229,37 @@ async function expandChat() {
 function collapseChat() {
   isExpanded.value = false;
 }
+
+/**
+ * Collapse the chat box when focus moves to an element outside of it.
+ * A null relatedTarget (window blur, click on a non-focusable area) is
+ * ignored here; those cases are covered by pointerdown instead.
+ * @param event - Focus event.
+ */
+function handleChatFocusOut(event) {
+  if (!isExpanded.value || isLoading.value) return;
+  const next = event.relatedTarget;
+  if (!next || chatBoxRef.value?.contains(next)) return;
+  collapseChat();
+}
+
+/**
+ * Collapse the chat box when the user taps or clicks outside of it.
+ * @param event - Pointer event.
+ */
+function handleDocumentPointerDown(event) {
+  if (!isExpanded.value || isLoading.value) return;
+  if (chatBoxRef.value?.contains(event.target)) return;
+  collapseChat();
+}
+
+onMounted(() => {
+  document.addEventListener('pointerdown', handleDocumentPointerDown);
+});
+
+onBeforeUnmount(() => {
+  document.removeEventListener('pointerdown', handleDocumentPointerDown);
+});
 
 /**
  * Scroll chat messages stream to bottom.

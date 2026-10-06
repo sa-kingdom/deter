@@ -6,14 +6,10 @@ This repository follows a strict workflow. All AI agents (including assistants a
 
 - **Primary Branch**: `rolling`
 - **Stable Branch**: `main`
-- **PR Strategy**:
-  - NEVER target `main` directly for features or refinements.
-  - ALWAYS create a feature branch (e.g. `feat/lottie-sticker-support`) and target `rolling` as the base branch.
-  - The repository follows a `rolling -> main` flow for deployments.
-  - **Language**: ALWAYS use **English** for all technical documentation, code comments, and Pull Request titles/descriptions.
-  - **Review Workflow**:
-    - Once a PR is created, ALWAYS comment `/gemini review` in the GitHub PR after every commit.
-    - If you disagree with a review, ALWAYS use a GitHub comment starting with `/gemini {{message}}` to provide justification.
+- **Branch Strategy**:
+  - ALWAYS commit features and refinements directly to `rolling`; do not create feature branches.
+  - NEVER commit to `main` directly; the repository follows a `rolling -> main` flow for deployments.
+- **Language**: ALWAYS use **English** for all technical documentation, code comments, and commit messages.
 
 ## Tool Usage and Code Editing
 
@@ -36,7 +32,7 @@ This repository follows a strict workflow. All AI agents (including assistants a
 
 ## Project Architecture & Functionalities
 
-Deter is a forum frontend and discussion API that consumes data synced by Dunya.
+Deter is a forum frontend and discussion API that consumes data served by Dunya through its HMAC-signed data API.
 
-- **Database Responsibility**: **Deter is a database consumer only. Dunya holds the sole responsibility for database schema management, including table creation, field updates, and migrations.** Do not attempt to modify the database schema from within the Deter repository.
+- **Database Responsibility**: **Deter does not access the database directly. Dunya holds the sole responsibility for database schema management, including table creation, field updates, and migrations, and exposes the data via its HTTP API.** Do not attempt to modify the database schema from within the Deter repository.
 - **Media Serving**: Deter serves Discord avatars and attachments cached by Dunya via the `/assets` directory.
