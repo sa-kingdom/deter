@@ -31,159 +31,215 @@
     </div>
 
     <!-- Expanded State: Interactive Chat UI -->
-    <div
-      v-else
-      ref="chatBoxRef"
-      class="dunya-chat-box ts-box is-elevated"
-      @focusout="handleChatFocusOut"
-    >
-      <!-- Chat Header -->
-      <div class="chat-header-bar">
-        <div class="header-left">
-          <div class="ts-avatar is-circular is-small header-avatar">
-            <img :src="DunyaAvatar" alt="Dunya">
-          </div>
-          <div class="header-titles">
-            <div class="header-main-title ts-text is-bold is-small">
-              Dunya
-            </div>
-            <div class="header-sub-title ts-text is-secondary is-tiny">
-              Deter 論壇社群智慧體
-            </div>
-          </div>
-        </div>
-
-        <!-- Header Actions -->
-        <div class="header-actions">
-          <!-- Collapse: Desktop -->
-          <button
-            type="button"
-            class="ts-button is-ghost is-secondary is-dense is-small is-start-icon is-not-minimal"
-            title="收起對話框 (Esc)"
-            @click="collapseChat"
-          >
-            <span class="ts-icon is-chevron-up-icon" />
-            <span>收起</span>
-          </button>
-          <!-- Collapse: Mobile Icon-Only -->
-          <button
-            type="button"
-            class="ts-button is-ghost is-secondary is-dense is-small is-icon is-minimal-only"
-            title="收起對話框 (Esc)"
-            aria-label="收起對話框"
-            @click="collapseChat"
-          >
-            <span class="ts-icon is-chevron-up-icon" />
-          </button>
-        </div>
-      </div>
-
-      <!-- Messages Stream -->
+    <template v-else>
+      <!-- Inline placeholder to prevent layout shift while maximized -->
       <div
-        ref="messagesContainerRef"
-        class="chat-messages-body"
+        v-if="isMaximized"
+        class="maximize-placeholder"
+        :style="{height: `${placeholderHeight}px`}"
+      />
+      <!-- Fullscreen backdrop while maximized -->
+      <div
+        v-if="isMaximized"
+        class="maximize-backdrop"
+        @click="restoreChat"
+      />
+      <div
+        ref="chatBoxRef"
+        class="dunya-chat-box ts-box is-elevated"
+        :class="{'is-maximized': isMaximized}"
+        @focusout="handleChatFocusOut"
       >
-        <!-- Welcome Card & Quick Starter Prompts -->
-        <Transition name="tip-fade">
-          <div
-            v-if="messages.length === 0"
-            class="welcome-card ts-segment is-secondary is-light has-bottom-spaced"
-          >
-            <div class="welcome-header">
-              <span class="ts-icon is-wand-magic-sparkles-icon text-accent" />
-              <span class="ts-text is-bold is-small">小提示</span>
+        <!-- Chat Header -->
+        <div class="chat-header-bar">
+          <div class="header-left">
+            <div class="ts-avatar is-circular is-small header-avatar">
+              <img :src="DunyaAvatar" alt="Dunya">
             </div>
-            <p class="welcome-desc">
-              您可以詢問任何關於 Deter 迪特社群的內容，例如探索推薦話題、看板介紹，或詢問如何使用 Discord 串接發文。
-            </p>
-            <div class="quick-prompts-wrap">
-              <button
-                v-for="(prompt, idx) in quickPrompts"
-                :key="idx"
-                type="button"
-                class="quick-prompt-chip"
-                @click="handleQuickPrompt(prompt)"
-              >
-                {{ prompt }}
-              </button>
+            <div class="header-titles">
+              <div class="header-main-title ts-text is-bold is-small">
+                Dunya
+              </div>
+              <div class="header-sub-title ts-text is-secondary is-tiny">
+                Deter 論壇社群智慧體
+              </div>
             </div>
           </div>
-        </Transition>
 
-        <!-- Chat Bubble History -->
+          <!-- Header Actions -->
+          <div class="header-actions">
+            <!-- Maximize / Restore: Desktop -->
+            <button
+              v-if="!isMaximized"
+              type="button"
+              class="ts-button is-ghost is-secondary is-dense is-small is-start-icon is-not-minimal"
+              title="最大化對話框"
+              @click="maximizeChat"
+            >
+              <span class="ts-icon is-maximize-icon" />
+              <span>最大化</span>
+            </button>
+            <button
+              v-else
+              type="button"
+              class="ts-button is-ghost is-secondary is-dense is-small is-start-icon is-not-minimal"
+              title="還原對話框 (Esc)"
+              @click="restoreChat"
+            >
+              <span class="ts-icon is-minimize-icon" />
+              <span>還原</span>
+            </button>
+            <!-- Maximize / Restore: Mobile Icon-Only -->
+            <button
+              v-if="!isMaximized"
+              type="button"
+              class="ts-button is-ghost is-secondary is-dense is-small is-icon is-minimal-only"
+              title="最大化對話框"
+              aria-label="最大化對話框"
+              @click="maximizeChat"
+            >
+              <span class="ts-icon is-maximize-icon" />
+            </button>
+            <button
+              v-else
+              type="button"
+              class="ts-button is-ghost is-secondary is-dense is-small is-icon is-minimal-only"
+              title="還原對話框 (Esc)"
+              aria-label="還原對話框"
+              @click="restoreChat"
+            >
+              <span class="ts-icon is-minimize-icon" />
+            </button>
+            <!-- Collapse: Desktop -->
+            <button
+              type="button"
+              class="ts-button is-ghost is-secondary is-dense is-small is-start-icon is-not-minimal"
+              title="收起對話框 (Esc)"
+              @click="collapseChat"
+            >
+              <span class="ts-icon is-chevron-up-icon" />
+              <span>收起</span>
+            </button>
+            <!-- Collapse: Mobile Icon-Only -->
+            <button
+              type="button"
+              class="ts-button is-ghost is-secondary is-dense is-small is-icon is-minimal-only"
+              title="收起對話框 (Esc)"
+              aria-label="收起對話框"
+              @click="collapseChat"
+            >
+              <span class="ts-icon is-chevron-up-icon" />
+            </button>
+          </div>
+        </div>
+
+        <!-- Messages Stream -->
         <div
-          v-for="msg in messages"
-          :key="msg.id"
-          class="message-row"
-          :class="{'is-user': msg.role === 'user', 'is-assistant': msg.role === 'assistant'}"
+          ref="messagesContainerRef"
+          class="chat-messages-body"
         >
-          <!-- Assistant Avatar -->
+          <!-- Welcome Card & Quick Starter Prompts -->
+          <Transition name="tip-fade">
+            <div
+              v-if="messages.length === 0"
+              class="welcome-card ts-segment is-secondary is-light has-bottom-spaced"
+            >
+              <div class="welcome-header">
+                <span class="ts-icon is-wand-magic-sparkles-icon text-accent" />
+                <span class="ts-text is-bold is-small">小提示</span>
+              </div>
+              <p class="welcome-desc">
+                您可以詢問任何關於 Deter 迪特社群的內容，例如探索推薦話題、看板介紹，或詢問如何使用 Discord 串接發文。
+              </p>
+              <div class="quick-prompts-wrap">
+                <button
+                  v-for="(prompt, idx) in quickPrompts"
+                  :key="idx"
+                  type="button"
+                  class="quick-prompt-chip"
+                  @click="handleQuickPrompt(prompt)"
+                >
+                  {{ prompt }}
+                </button>
+              </div>
+            </div>
+          </Transition>
+
+          <!-- Chat Bubble History -->
           <div
-            v-if="msg.role === 'assistant'"
-            class="ts-avatar is-circular is-small message-avatar"
+            v-for="msg in messages"
+            :key="msg.id"
+            class="message-row"
+            :class="{'is-user': msg.role === 'user', 'is-assistant': msg.role === 'assistant'}"
           >
-            <img :src="DunyaAvatar" alt="Dunya">
+            <!-- Assistant Avatar -->
+            <div
+              v-if="msg.role === 'assistant'"
+              class="ts-avatar is-circular is-small message-avatar"
+            >
+              <img :src="DunyaAvatar" alt="Dunya">
+            </div>
+
+            <!-- Message Bubble -->
+            <div class="message-bubble">
+              <div class="message-content">
+                {{ msg.content }}
+              </div>
+              <div class="message-time ts-text is-tiny is-secondary">
+                {{ formatTime(msg.timestamp) }}
+              </div>
+            </div>
           </div>
 
-          <!-- Message Bubble -->
-          <div class="message-bubble">
-            <div class="message-content">
-              {{ msg.content }}
+          <!-- Typing Indicator -->
+          <div
+            v-if="isLoading"
+            class="message-row is-assistant"
+          >
+            <div class="ts-avatar is-circular is-small message-avatar">
+              <img :src="DunyaAvatar" alt="Dunya">
             </div>
-            <div class="message-time ts-text is-tiny is-secondary">
-              {{ formatTime(msg.timestamp) }}
+            <div class="message-bubble typing-bubble">
+              <span class="typing-dot" />
+              <span class="typing-dot" />
+              <span class="typing-dot" />
             </div>
           </div>
         </div>
 
-        <!-- Typing Indicator -->
-        <div
-          v-if="isLoading"
-          class="message-row is-assistant"
-        >
-          <div class="ts-avatar is-circular is-small message-avatar">
-            <img :src="DunyaAvatar" alt="Dunya">
-          </div>
-          <div class="message-bubble typing-bubble">
-            <span class="typing-dot" />
-            <span class="typing-dot" />
-            <span class="typing-dot" />
-          </div>
+        <!-- Integrated Input Footer -->
+        <div class="chat-footer-bar">
+          <form @submit.prevent="handleSendMessage">
+            <div class="integrated-input-box">
+              <textarea
+                ref="inputRef"
+                v-model="inputText"
+                class="integrated-textarea"
+                rows="2"
+                placeholder="輸入問題或訊息..."
+                :disabled="isLoading"
+                @keydown.enter.exact.prevent="handleSendMessage"
+                @keydown.esc="handleEscape"
+              />
+              <div class="integrated-actions-bar">
+                <span class="input-hint-text">
+                  {{ isMaximized ? '按 Esc 可還原' : '按 Esc 可收合' }}
+                </span>
+                <button
+                  type="submit"
+                  class="ts-button is-primary is-small is-circular send-btn"
+                  :class="{'is-loading': isLoading}"
+                  :disabled="!inputText.trim() || isLoading"
+                  title="發送訊息 (Enter)"
+                >
+                  <span class="ts-icon is-paper-plane-icon" />
+                </button>
+              </div>
+            </div>
+          </form>
         </div>
       </div>
-
-      <!-- Integrated Input Footer -->
-      <div class="chat-footer-bar">
-        <form @submit.prevent="handleSendMessage">
-          <div class="integrated-input-box">
-            <textarea
-              ref="inputRef"
-              v-model="inputText"
-              class="integrated-textarea"
-              rows="2"
-              placeholder="輸入問題或訊息..."
-              :disabled="isLoading"
-              @keydown.enter.exact.prevent="handleSendMessage"
-              @keydown.esc="collapseChat"
-            />
-            <div class="integrated-actions-bar">
-              <span class="input-hint-text">
-                按 Esc 可收合
-              </span>
-              <button
-                type="submit"
-                class="ts-button is-primary is-small is-circular send-btn"
-                :class="{'is-loading': isLoading}"
-                :disabled="!inputText.trim() || isLoading"
-                title="發送訊息 (Enter)"
-              >
-                <span class="ts-icon is-paper-plane-icon" />
-              </button>
-            </div>
-          </div>
-        </form>
-      </div>
-    </div>
+    </template>
   </div>
 </template>
 
@@ -197,6 +253,8 @@ const dunyaApiBaseUrl = computed(() => {
 });
 
 const isExpanded = ref(false);
+const isMaximized = ref(false);
+const placeholderHeight = ref(0);
 const inputText = ref('');
 const isLoading = ref(false);
 const messages = ref([]);
@@ -228,16 +286,53 @@ async function expandChat() {
  */
 function collapseChat() {
   isExpanded.value = false;
+  isMaximized.value = false;
+}
+
+/**
+ * Maximize chat box into a fullscreen overlay while keeping an inline
+ * placeholder of its original height to prevent layout shift.
+ */
+async function maximizeChat() {
+  if (chatBoxRef.value) {
+    placeholderHeight.value = chatBoxRef.value.offsetHeight;
+  }
+  isMaximized.value = true;
+  await nextTick();
+  scrollToBottom();
+  inputRef.value?.focus();
+}
+
+/**
+ * Restore maximized chat box back to its inline size.
+ */
+async function restoreChat() {
+  isMaximized.value = false;
+  await nextTick();
+  scrollToBottom();
+  inputRef.value?.focus();
+}
+
+/**
+ * Handle Escape key: restore the maximized box first, otherwise collapse.
+ */
+function handleEscape() {
+  if (isMaximized.value) {
+    restoreChat();
+  } else {
+    collapseChat();
+  }
 }
 
 /**
  * Collapse the chat box when focus moves to an element outside of it.
  * A null relatedTarget (window blur, click on a non-focusable area) is
  * ignored here; those cases are covered by pointerdown instead.
+ * The maximized overlay is dismissed explicitly instead.
  * @param event - Focus event.
  */
 function handleChatFocusOut(event) {
-  if (!isExpanded.value || isLoading.value) return;
+  if (!isExpanded.value || isLoading.value || isMaximized.value) return;
   const next = event.relatedTarget;
   if (!next || chatBoxRef.value?.contains(next)) return;
   collapseChat();
@@ -245,10 +340,11 @@ function handleChatFocusOut(event) {
 
 /**
  * Collapse the chat box when the user taps or clicks outside of it.
+ * The maximized overlay is restored explicitly via its backdrop instead.
  * @param event - Pointer event.
  */
 function handleDocumentPointerDown(event) {
-  if (!isExpanded.value || isLoading.value) return;
+  if (!isExpanded.value || isLoading.value || isMaximized.value) return;
   if (chatBoxRef.value?.contains(event.target)) return;
   collapseChat();
 }
@@ -480,6 +576,49 @@ async function handleSendMessage() {
   to {
     opacity: 1;
     transform: translateY(0) scale(1);
+  }
+}
+
+/* ── Maximized Overlay ── */
+.maximize-placeholder {
+  width: 100%;
+  flex: none;
+}
+
+.maximize-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  z-index: 9998;
+}
+
+.dunya-chat-box.is-maximized {
+  position: fixed;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: min(960px, 96vw);
+  height: 96vh;
+  z-index: 9999;
+  display: flex;
+  flex-direction: column;
+  animation: maximizeIn 0.25s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.dunya-chat-box.is-maximized .chat-messages-body {
+  flex: 1;
+  min-height: 0;
+  max-height: none;
+}
+
+@keyframes maximizeIn {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -50%) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, -50%) scale(1);
   }
 }
 
